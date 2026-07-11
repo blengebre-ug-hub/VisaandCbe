@@ -21,9 +21,26 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentQrDataUrl = '';
 
   // ==========================================
+  // AUDIO PLAYBACK ON FIRST INTERACTION
+  // ==========================================
+  const bgAudio = document.getElementById('bg-audio');
+  if (bgAudio) {
+    // Set a reasonable volume for background ambiance
+    bgAudio.volume = 0.3;
+    
+    // Play on first click anywhere on the document
+    const playAudio = () => {
+      bgAudio.play().catch(err => console.log('Audio autoplay blocked or no audio source:', err));
+      // Remove listener once played
+      document.removeEventListener('click', playAudio);
+    };
+    document.addEventListener('click', playAudio);
+  }
+
+  // ==========================================
   // 1. LOADING SCREEN TRANSITION
   // ==========================================
-  // Wait 2.6 seconds (giving enough time for progress animation)
+  // Wait 5.0 seconds (giving enough time for progress animation)
   setTimeout(() => {
     loadingScreen.classList.add('fade-out');
     appContainer.classList.remove('hidden');
@@ -32,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
       loadingScreen.style.display = 'none';
     }, 1000);
-  }, 2600);
+  }, 5000);
 
   // ==========================================
   // 2. NAVIGATION BETWEEN SCREENS
