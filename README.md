@@ -248,5 +248,158 @@ sudo -u postgres psql -d rsvp -c "DELETE FROM rsvps;"
 
 ---
 
+## ☁️ Deployment Guide
+
+This app needs a host that supports **Node.js + PostgreSQL together**.
+Here are the three best options, from easiest to most control:
+
+---
+
+### ✅ Option 1 — Railway (Recommended — Easiest)
+
+**Railway** is the simplest platform for this app. It handles Node.js and PostgreSQL in one place with almost no configuration.
+
+**Cost:** Free tier available (500 hours/month). Paid from ~$5/month.
+
+**Steps:**
+
+1. **Create a free account** → [railway.app](https://railway.app)
+
+2. **Push your code to GitHub first:**
+   ```bash
+   cd /home/blengebre/Documents/Rsvp/fifa
+   git init
+   git add .
+   git commit -m "Initial commit"
+   # Create a repo on github.com, then:
+   git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
+   git push -u origin main
+   ```
+   > ⚠️ Make sure `.env` is in your `.gitignore` — never push secrets to GitHub!
+
+3. **On Railway:**
+   - Click **"New Project"** → **"Deploy from GitHub repo"**
+   - Select your repository
+   - Railway auto-detects Node.js and runs `npm start`
+
+4. **Add PostgreSQL:**
+   - In your Railway project, click **"New Service"** → **"Database"** → **"PostgreSQL"**
+   - Railway automatically sets `DATABASE_URL` — update your `server.js` to use it, or set these variables manually in Railway's **Variables** tab:
+     ```
+     DB_HOST     = (from Railway PostgreSQL service)
+     DB_PORT     = 5432
+     DB_USER     = (from Railway PostgreSQL service)
+     DB_PASSWORD = (from Railway PostgreSQL service)
+     DB_NAME     = railway
+     PORT        = 3000
+     ```
+
+5. **Your app goes live** at a URL like `https://your-app.up.railway.app` 🎉
+
+---
+
+### ✅ Option 2 — Render (Free Tier Available)
+
+**Render** is very similar to Railway. Good for free hosting, but free tier spins down after 15 minutes of inactivity.
+
+**Cost:** Free tier (sleeps after inactivity). Paid from ~$7/month (always on).
+
+**Steps:**
+
+1. **Create account** → [render.com](https://render.com)
+2. **Push code to GitHub** (same steps as above)
+3. Click **"New Web Service"** → connect your GitHub repo
+4. Set:
+   - **Build Command:** `npm install`
+   - **Start Command:** `npm start`
+5. **Add PostgreSQL:** Click **"New"** → **"PostgreSQL"** → copy the connection URL
+6. In your Web Service **Environment Variables**, add all your `.env` values
+7. Deploy — live at `https://your-app.onrender.com`
+
+---
+
+### ✅ Option 3 — VPS / Cloud Server (Most Control)
+
+Best for **production use at the event** — always on, no cold starts, full control.
+
+**Recommended providers:**
+
+| Provider | Cost | Good For |
+|----------|------|----------|
+| **DigitalOcean Droplet** | From $6/month | Full Ubuntu server |
+| **Hetzner Cloud** | From €3.79/month | Cheapest reliable VPS |
+| **AWS EC2 (t3.micro)** | Free 1 year | Enterprise scale |
+| **Google Cloud Run** | Pay per use | Serverless containers |
+
+**Steps for DigitalOcean / Hetzner:**
+
+```bash
+# 1. SSH into your server
+ssh root@YOUR_SERVER_IP
+
+# 2. Install Node.js
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# 3. Install PostgreSQL
+sudo apt install postgresql postgresql-contrib -y
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+
+# 4. Create database
+sudo -u postgres psql -c "CREATE USER rsvpuser WITH PASSWORD 'your_password';"
+sudo -u postgres psql -c "CREATE DATABASE rsvp OWNER rsvpuser;"
+
+# 5. Clone your project
+git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git /var/www/rsvp
+cd /var/www/rsvp
+npm install
+
+# 6. Set your .env variables
+nano .env
+# Fill in DB credentials + PORT=3000
+
+# 7. Install PM2 (keeps the server running after logout)
+npm install -g pm2
+pm2 start server.js --name "rsvp-app"
+pm2 startup   # auto-start on server reboot
+pm2 save
+
+# 8. (Optional) Point a domain + HTTPS with Nginx + Certbot
+sudo apt install nginx certbot python3-certbot-nginx -y
+```
+
+---
+
+### 📋 Before Deploying — Checklist
+
+- [ ] Add `.env` to `.gitignore` so secrets are not pushed to GitHub
+- [ ] Set all environment variables in the hosting platform's dashboard
+- [ ] Change `DB_PASSWORD` to a strong production password
+- [ ] If using email, configure real SMTP credentials (e.g. Gmail App Password)
+- [ ] Test registration end-to-end after deployment
+
+### Create `.gitignore` (if not already present)
+
+```bash
+cat > /home/blengebre/Documents/Rsvp/fifa/.gitignore << 'EOF'
+node_modules/
+.env
+data/sent_emails/
+*.log
+EOF
+```
+
+---
+
+### 🏆 Recommendation for the Event
+
+For a **one-night VIP event**, the simplest and fastest path is:
+
+> **Railway** → Free tier → Deploy in under 10 minutes → Share the live URL with guests and staff
+
+If you need the app to be live **before and during the event with guaranteed uptime**, go with **Railway Paid ($5/month)** or a **DigitalOcean Droplet ($6/month)**.
+
+---
+
 *Built for CBE & Visa — FIFA World Cup 2026™ VIP Final Viewing Party | Addis Ababa, Ethiopia*
-# VisaandCbe
