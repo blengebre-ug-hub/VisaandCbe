@@ -10,6 +10,7 @@ const { Pool } = require('pg');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
+const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
 // ─── PostgreSQL Connection Pool ────────────────────────────────────────────────
 // Supports both Render (DATABASE_URL) and local (.env individual vars)
@@ -344,4 +345,8 @@ app.get('/qrcodes/:id.png', (req, res) => {
   } else {
     res.status(404).json({ error: 'QR code not found.' });
   }
+});
+// ─── Start Server ─────────────────────────────────────────────
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });

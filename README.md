@@ -315,7 +315,7 @@ Here are the three best options, from easiest to most control:
 5. **Add PostgreSQL:** Click **"New"** → **"PostgreSQL"** → copy the connection URL
 6. In your Web Service **Environment Variables**, add all your `.env` values
 7. Deploy — live at `https://your-app.onrender.com`
-
+postgresql://rsvp_kln8_user:d4Ge8IZlzzP0zELBUF1exi9RSEAuIDKa@dpg-d999j477f7vs73a2c4mg-a.oregon-postgres.render.com/rsvp_kln8
 ---
 
 ### ✅ Option 3 — VPS / Cloud Server (Most Control)
