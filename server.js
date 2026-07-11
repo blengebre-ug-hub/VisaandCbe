@@ -12,18 +12,27 @@ const app  = express();
 const PORT = process.env.PORT || 3000;
 
 // ─── PostgreSQL Connection Pool ────────────────────────────────────────────────
-const pool = new Pool({
-  host:     process.env.DB_HOST     || 'localhost',
-  port:     parseInt(process.env.DB_PORT) || 5432,
-  user:     process.env.DB_USER     || 'postgres',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME     || 'rsvp',
-});
+// Supports both Render (DATABASE_URL) and local (.env individual vars)
+const poolConfig = process.env.DATABASE_URL
+  ? {
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false }, // required for Render PostgreSQL
+    }
+  : {
+      host:     process.env.DB_HOST     || 'localhost',
+      port:     parseInt(process.env.DB_PORT) || 5432,
+      user:     process.env.DB_USER     || 'postgres',
+      password: process.env.DB_PASSWORD || '',
+      database: process.env.DB_NAME     || 'rsvp',
+    };
+
+const pool = new Pool(poolConfig);
 
 // Test connection on startup
 pool.connect((err, client, release) => {
   if (err) {
-    console.error('❌ PostgreSQL connection failed:', err.message);
+    console.error('❌ PostgreSQL connection failed:');
+    console.error(err);
     console.error('   Check your .env credentials and that PostgreSQL is running.');
   } else {
     console.log('✅ PostgreSQL connected successfully.');
