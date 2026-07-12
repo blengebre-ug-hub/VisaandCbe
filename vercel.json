@@ -2,16 +2,23 @@
   "builds": [
     {
       "src": "server.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "index.html",
+          "styles.css",
+          "script.js",
+          "assets/**",
+          "checkin.html",
+          "checkin.css",
+          "checkin.js"
+        ]
+      }
     }
   ],
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/server.js"
-    },
-    {
-      "source": "/qrcodes/(.*)",
+      "source": "/(.*)",
       "destination": "/server.js"
     }
   ]
