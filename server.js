@@ -278,7 +278,7 @@ app.post('/api/rsvp', async (req, res) => {
               </tr>
             </table>
             <h1 style="margin:0 0 6px;color:#D4AF37;font-size:26px;font-weight:800;letter-spacing:3px;text-shadow:0 0 20px rgba(212,175,55,0.4);">FIFA WORLD CUP 2026™</h1>
-            <p style="margin:0;color:#a8bce8;font-size:13px;letter-spacing:4px;text-transform:uppercase;">Final Viewing Party — VIP Invitation</p>
+            <p style="margin:0;color:#a8bce8;font-size:13px;letter-spacing:4px;text-transform:uppercase;">Final Viewing Party · VIP Invitation</p>
           </td>
         </tr>
 
@@ -322,7 +322,7 @@ app.post('/api/rsvp', async (req, res) => {
                   <tr>
                     <td width="50%">
                       <p style="margin:0 0 3px;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#888;">Supporting Team</p>
-                      <p style="margin:0;font-size:14px;font-weight:600;color:#0a1547;">${team || '—'}</p>
+                      <p style="margin:0;font-size:14px;font-weight:600;color:#0a1547;">${team || '-'}</p>
                     </td>
                     <td width="50%">
                       <p style="margin:0 0 3px;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#888;">Guests</p>
@@ -425,7 +425,7 @@ Reservation ID: ${reservationId}
 Date: Sunday, July 19, 2026
 Time: 8:00 PM Onwards
 Venue: VIP Lounge, Commercial Bank of Ethiopia HQ, Addis Ababa, Ethiopia
-Supporting Team: ${team || '—'}
+Supporting Team: ${team || '-'}
 Guests: ${guests}
 Fan Points: ${fanPoints}
 
@@ -440,7 +440,7 @@ Commercial Bank of Ethiopia & Visa International
           from:        `"CBE & Visa VIP Events" <${process.env.SMTP_USER}>`,
           to:          cleanEmail,
           replyTo:     process.env.SMTP_USER,
-          subject:     `Your FIFA World Cup 2026 VIP Pass — ${reservationId}`,
+          subject:     `Your FIFA World Cup 2026 VIP Pass: ${reservationId}`,
           text:        plainTextBody,
           html:        emailBodyHTML,
           attachments: [{ filename: `VIP-Pass-QRCode-${reservationId}.png`, content: qrBuffer, cid: 'qrcode' }]

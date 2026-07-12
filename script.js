@@ -3,8 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const loadingScreen = document.getElementById('loading-screen');
   const loadingVideo = document.getElementById('loading-video');
   const appContainer = document.getElementById('app-container');
-  const bgAudio = document.getElementById('bg-audio');
-  const btnSoundToggle = document.getElementById('btn-sound-toggle');
 
   const screens = {
     home: document.getElementById('home-screen'),
@@ -58,30 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let currentReservationId = '';
   let currentQrDataUrl = '';
-  let audioStarted = false;
-  let soundEnabled = sessionStorage.getItem('soundEnabled') !== '0';
-
-  function applySoundState() {
-    const shouldMute = !soundEnabled;
-    if (bgAudio) bgAudio.muted = shouldMute;
-    if (loadingVideo) loadingVideo.muted = shouldMute;
-    if (btnSoundToggle) {
-      btnSoundToggle.classList.toggle('sound-off', !soundEnabled);
-      btnSoundToggle.setAttribute('aria-label', soundEnabled ? 'Mute sound' : 'Unmute sound');
-      btnSoundToggle.setAttribute('aria-pressed', String(soundEnabled));
-    }
-  }
-
-  applySoundState();
 
   // ─── 1. LOADING SCREEN ──────────────────────────────────────────────────────
   if (loadingVideo) {
-    loadingVideo.volume = 0.7;
-    loadingVideo.muted = !soundEnabled;
-    loadingVideo.play().catch(() => {
-      loadingVideo.muted = true;
-      loadingVideo.play().catch(() => {});
-    });
+    loadingVideo.play().catch(() => {});
   }
 
   setTimeout(() => {
@@ -90,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     loadingScreen.classList.add('fade-out');
     appContainer.classList.remove('hidden');
-    startAmbientMusic();
 
     setTimeout(() => {
       loadingScreen.style.display = 'none';
@@ -107,39 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
     startCountdown();
     checkHalftime();
     setInterval(checkHalftime, 60000);
-  }
-
-  // ─── 2. AMBIENT MUSIC ───────────────────────────────────────────────────────
-  function startAmbientMusic() {
-    if (!bgAudio || audioStarted) return;
-    bgAudio.volume = 0.25;
-    bgAudio.muted = !soundEnabled;
-    bgAudio.play().then(() => {
-      audioStarted = true;
-    }).catch(() => {
-      document.addEventListener('click', tryPlayAudio, { once: true });
-      document.addEventListener('touchstart', tryPlayAudio, { once: true });
-    });
-  }
-
-  function tryPlayAudio() {
-    if (!bgAudio || audioStarted) return;
-    bgAudio.muted = !soundEnabled;
-    bgAudio.play().then(() => { audioStarted = true; }).catch(() => {});
-  }
-
-  if (btnSoundToggle) {
-    btnSoundToggle.addEventListener('click', () => {
-      soundEnabled = !soundEnabled;
-      sessionStorage.setItem('soundEnabled', soundEnabled ? '1' : '0');
-      applySoundState();
-      if (soundEnabled) {
-        tryPlayAudio();
-      } else if (bgAudio) {
-        bgAudio.pause();
-        audioStarted = false;
-      }
-    });
   }
 
   // ─── 3. COUNTDOWN TIMER ─────────────────────────────────────────────────────
@@ -185,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   btnStartRsvp.addEventListener('click', () => {
-    tryPlayAudio();
     switchScreen(screens.home, screens.team);
   });
 
@@ -331,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderMatchPass(formData, result) {
     ticketGuestName.textContent = formData.name;
     ticketTeam.textContent = formData.team;
-    ticketPrediction.textContent = `${formData.scoreHome} — ${formData.scoreAway}` +
+    ticketPrediction.textContent = `${formData.scoreHome} - ${formData.scoreAway}` +
       (formData.goalScorer ? ` · ${formData.goalScorer}` : '');
     ticketGuests.textContent = formData.guestCount;
     ticketResId.textContent = result.reservationId;

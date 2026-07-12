@@ -20,7 +20,7 @@
   <!-- ============ 1. LOADING SCREEN ============ -->
   <div id="loading-screen" class="loading-overlay">
     <div class="video-background-container">
-      <video id="loading-video" autoplay loop playsinline>
+      <video id="loading-video" autoplay loop muted playsinline>
         <source src="assets/loading.mp4" type="video/mp4">
       </video>
       <div class="video-darkener"></div>
@@ -67,29 +67,12 @@
     <!-- Fixed corner logos -->
     <div class="corner-brand corner-brand-visa">
       <img src="/assets/brand/visa-logo-transparent.png" alt="Visa" class="corner-logo">
+      <span class="corner-brand-label">Official<br>Partner</span>
     </div>
     <div class="corner-brand corner-brand-cbe">
       <img src="/assets/brand/cbe-logo-transparent.png" alt="Commercial Bank of Ethiopia" class="corner-logo">
+      <span class="corner-brand-label">Official<br>Host</span>
     </div>
-
-    <!-- Background Audio (starts after loading) -->
-    <audio id="bg-audio" loop preload="auto">
-      <source src="assets/mfcc-ambient-ambient-music-479762.mp3" type="audio/mpeg">
-    </audio>
-
-    <!-- Sound toggle -->
-    <button type="button" id="btn-sound-toggle" class="sound-toggle" aria-label="Mute sound" aria-pressed="true">
-      <svg class="icon icon-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <polygon points="4 9 8 9 12 5 12 19 8 15 4 15 4 9"></polygon>
-        <path d="M16 8a5 5 0 0 1 0 8"></path>
-        <path d="M18.5 5.5a9 9 0 0 1 0 13"></path>
-      </svg>
-      <svg class="icon icon-sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <polygon points="4 9 8 9 12 5 12 19 8 15 4 15 4 9"></polygon>
-        <line x1="17" y1="9" x2="23" y2="15"></line>
-        <line x1="23" y1="9" x2="17" y2="15"></line>
-      </svg>
-    </button>
 
     <!-- ============ 2. LANDING PAGE ============ -->
     <section id="home-screen" class="screen active">
@@ -110,7 +93,7 @@
             <span class="title-fifa">FIFA WORLD CUP 2026™</span>
             <span class="title-event">FINAL VIEWING PARTY</span>
           </h1>
-          <p class="hero-subtitle">An extraordinary evening of football, fine dining, and premium hospitality — proudly
+          <p class="hero-subtitle">An extraordinary evening of football, fine dining, and premium hospitality, proudly
             hosted by <strong class="text-cbe">Commercial Bank of Ethiopia</strong> &amp; <strong
               class="text-visa">Visa</strong>.</p>
 
@@ -195,18 +178,14 @@
         </div>
         <div class="team-cards">
           <button type="button" class="team-card" data-team="Brazil">
-            <div class="team-flag flag-brazil" aria-hidden="true">
-              <span class="flag-diamond"><span class="flag-globe"></span></span>
-            </div>
+            <div class="team-flag team-flag-emoji" aria-hidden="true">🇧🇷</div>
             <h3>Brazil</h3>
-            <p>Finalist — Home Side</p>
+            <p>Finalist · Home Side</p>
           </button>
           <button type="button" class="team-card" data-team="Argentina">
-            <div class="team-flag flag-argentina" aria-hidden="true">
-              <span class="flag-sun"></span>
-            </div>
+            <div class="team-flag team-flag-emoji" aria-hidden="true">🇦🇷</div>
             <h3>Argentina</h3>
-            <p>Finalist — Away Side</p>
+            <p>Finalist · Away Side</p>
           </button>
         </div>
         <p class="step-hint">Tap a team to continue · +50 Fan Points</p>
@@ -236,7 +215,7 @@
               <label for="score-home">Brazil</label>
               <input type="number" id="score-home" min="0" max="20" value="1" inputmode="numeric">
             </div>
-            <span class="score-dash">—</span>
+            <span class="score-dash">-</span>
             <div class="score-team">
               <label for="score-away">Argentina</label>
               <input type="number" id="score-away" min="0" max="20" value="0" inputmode="numeric">
@@ -270,7 +249,7 @@
         <button type="button" class="back-link" data-back="prediction-screen"><span class="arrow">←</span> Back</button>
         <div class="form-header">
           <h2 class="form-title">Reserve Your Seat</h2>
-          <p class="form-subtitle">Almost there — just a few details to secure your spot.</p>
+          <p class="form-subtitle">Almost there. Just a few details to secure your spot.</p>
         </div>
 
         <form id="rsvp-form" class="rsvp-form" novalidate>
@@ -362,15 +341,15 @@
             <div class="ticket-info">
               <div class="ticket-row">
                 <span class="ticket-label">Guest Name</span>
-                <span class="ticket-value" id="ticket-guest-name">—</span>
+                <span class="ticket-value" id="ticket-guest-name">-</span>
               </div>
               <div class="ticket-row">
                 <span class="ticket-label">Supporting Team</span>
-                <span class="ticket-value" id="ticket-team">—</span>
+                <span class="ticket-value" id="ticket-team">-</span>
               </div>
               <div class="ticket-row">
                 <span class="ticket-label">Match Prediction</span>
-                <span class="ticket-value" id="ticket-prediction">—</span>
+                <span class="ticket-value" id="ticket-prediction">-</span>
               </div>
               <div class="ticket-row">
                 <span class="ticket-label">Guests</span>
@@ -378,7 +357,7 @@
               </div>
               <div class="ticket-row">
                 <span class="ticket-label">Reservation ID</span>
-                <span class="ticket-value gold-text" id="ticket-res-id">—</span>
+                <span class="ticket-value gold-text" id="ticket-res-id">-</span>
               </div>
               <div class="ticket-row">
                 <span class="ticket-label">Venue</span>
@@ -460,7 +439,7 @@
             <label for="ht-score-home">Brazil</label>
             <input type="number" id="ht-score-home" min="0" max="20" value="1" inputmode="numeric">
           </div>
-          <span class="score-dash">—</span>
+          <span class="score-dash">-</span>
           <div class="score-team">
             <label for="ht-score-away">Argentina</label>
             <input type="number" id="ht-score-away" min="0" max="20" value="0" inputmode="numeric">
