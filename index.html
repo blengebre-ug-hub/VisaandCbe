@@ -3,15 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>FIFA World Cup 2026™ Final — VIP Viewing Party | CBE &amp; Visa</title>
-  <meta name="description" content="Exclusive VIP Invitation to the FIFA World Cup 2026™ Final Viewing Party, hosted by Commercial Bank of Ethiopia and Visa.">
-  
-  <!-- Premium Fonts -->
+  <title> Final world cup 2026TM </title>
+  <meta name="description" content="Exclusive VIP invitation to the FIFA World Cup 2026™ Final Viewing Party, hosted by Commercial Bank of Ethiopia and Visa.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
-  <!-- CSS Stylesheet -->
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -19,23 +15,20 @@
   <!-- ============ 1. LOADING SCREEN ============ -->
   <div id="loading-screen" class="loading-overlay">
     <div class="video-background-container">
-      <video id="loading-video" autoplay loop muted playsinline>
+      <video id="loading-video" autoplay loop playsinline>
         <source src="assets/loading.mp4" type="video/mp4">
-        Your browser does not support the video tag.
       </video>
       <div class="video-darkener"></div>
     </div>
-    
+
     <div class="loading-content">
       <div class="loading-eyebrow">EXCLUSIVE INVITATION</div>
-      <h1 class="loading-title">FIFA WORLD CUP 2026TM™</h1>
-      <h2 class="loading-subtitle">Final Viewing Party</h2>
-      
-      <div class="loading-hosts">
-        <span class="host-intro">Hosted by</span>
-        <div class="loading-partner-logos">
+    
+      <h2 class="loading-subtitle">FIFA World Cup 2026 TM</h2>
 
-          <!-- CBE loading logo with text -->
+      <div class="loading-hosts">
+        <span class="host-intro">Presented by</span>
+        <div class="loading-partner-logos">
           <div class="loading-partner-block">
             <img src="/assets/brand/cbe-logo-transparent.png" alt="Commercial Bank of Ethiopia" class="loading-logo loading-logo-cbe">
             <div class="loading-partner-name">
@@ -43,20 +36,16 @@
               <span class="partner-name-en">Commercial Bank of Ethiopia</span>
             </div>
           </div>
-
-          <span class="host-divider">&amp;</span>
-
-          <!-- Visa loading logo with text -->
+          <span class="host-divider">×</span>
           <div class="loading-partner-block">
-            <img src="/assets/brand/visa-logo.svg" alt="Visa" class="loading-logo loading-logo-visa">
+            <img src="/assets/brand/visa-logo.png" alt="Visa" class="loading-logo loading-logo-visa">
             <div class="loading-partner-name">
-              <span class="partner-name-en" style="color:#6ab0f5;">Visa International</span>
+              <span class="partner-name-en visa-text">Visa International</span>
             </div>
           </div>
-
         </div>
       </div>
-      
+
       <div class="loading-bottom">
         <span class="loading-text">Loading...</span>
         <div class="progress-bar-container">
@@ -66,243 +55,368 @@
     </div>
   </div>
 
-  <!-- ============ MAIN CONTAINER ============ -->
+  <!-- ============ MAIN APP ============ -->
   <div id="app-container" class="app-container hidden">
 
-    <!-- Fixed Corner Logos -->
-    <img src="/assets/brand/visa-logo.svg" alt="Visa" class="corner-logo corner-logo-visa">
-    <img src="/assets/brand/cbe-logo-transparent.png" alt="CBE" class="corner-logo corner-logo-cbe">
+    <!-- Fixed corner logos -->
+    <img src="/assets/brand/visa-logo.png" alt="Visa" class="corner-logo corner-logo-visa">
+    <img src="/assets/brand/cbe-logo-transparent.png" alt="Commercial Bank of Ethiopia" class="corner-logo corner-logo-cbe">
 
-    <!-- Background Audio -->
-    <audio id="bg-audio" loop>
-      <source src="/assets/ambient.mp3" type="audio/mpeg">
+    <!-- Background Audio (starts after loading) -->
+    <audio id="bg-audio" loop preload="auto">
+      <source src="assets/mfcc-ambient-ambient-music-479762.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- ============ 2. HOME SCREEN ============ -->
+    <!-- Sound toggle -->
+    <button type="button" id="btn-sound-toggle" class="sound-toggle" aria-label="Mute sound" aria-pressed="true">🔊</button>
+
+    <!-- ============ 2. LANDING PAGE ============ -->
     <section id="home-screen" class="screen active">
       <div class="hero-container">
-        <!-- Floating brand ambient glows -->
+        
+
         <div class="glow-cbe" aria-hidden="true"></div>
         <div class="glow-visa" aria-hidden="true"></div>
+        <div class="brand-dual-stripe" aria-hidden="true"></div>
 
         <header class="hero-header">
-          <div class="brand-badge">EXCLUSIVE VIP INVITATION</div>
+          <div class="brand-badge">VISA × CBE EXCLUSIVE EVENT</div>
         </header>
 
         <main class="hero-main">
           <h1 class="hero-title">
-            <span class="title-fifa">FIFA WORLD CUP 2026™ FINAL</span>
-            <span class="title-event">VIP VIEWING PARTY</span>
+            
+            <span class="title-fifa">FIFA WORLD CUP 2026™</span>
+            <span class="title-event">FINAL VIEWING PARTY</span>
           </h1>
-          <p class="hero-subtitle">You are cordially invited by <strong style="color:#d4af37;">Commercial Bank of Ethiopia</strong> &amp; <strong style="color:#6ab0f5;">Visa</strong> to join us for an extraordinary evening of sports, dining, and premium camaraderie.</p>
+          <p class="hero-subtitle">An extraordinary evening of football, fine dining, and premium hospitality — proudly hosted by <strong class="text-cbe">Commercial Bank of Ethiopia</strong> &amp; <strong class="text-visa">Visa</strong>.</p>
 
-          <!-- Details Grid -->
+         
+
+          <!-- Countdown -->
+          <div class="countdown-section">
+            <p class="countdown-label">Event starts in</p>
+            <div class="countdown-timer" id="countdown-timer">
+              <div class="countdown-unit"><span id="cd-days">00</span><small>Days</small></div>
+              <div class="countdown-sep">:</div>
+              <div class="countdown-unit"><span id="cd-hours">00</span><small>Hours</small></div>
+              <div class="countdown-sep">:</div>
+              <div class="countdown-unit"><span id="cd-mins">00</span><small>Mins</small></div>
+              <div class="countdown-sep">:</div>
+              <div class="countdown-unit"><span id="cd-secs">00</span><small>Secs</small></div>
+            </div>
+          </div>
+
           <div class="details-grid">
             <div class="detail-card">
               <div class="detail-icon">📅</div>
               <div class="detail-label">Date</div>
               <div class="detail-value">Sunday, July 19, 2026</div>
             </div>
-            
             <div class="detail-card">
               <div class="detail-icon">🕒</div>
               <div class="detail-label">Time</div>
               <div class="detail-value">8:00 PM Onwards</div>
             </div>
-
             <div class="detail-card">
               <div class="detail-icon">📍</div>
               <div class="detail-label">Venue</div>
               <div class="detail-value">VIP Lounge, CBE HQ<br><small>Addis Ababa, Ethiopia</small></div>
             </div>
-
-            <div class="detail-card">
-              <div class="detail-icon">👔</div>
-              <div class="detail-label">Dress Code</div>
-              <div class="detail-value">Black Tie / Formal</div>
-            </div>
-
-            <div class="detail-card">
-              <div class="detail-icon">🍽</div>
-              <div class="detail-label">Dinner</div>
-              <div class="detail-value">Gourmet Dinner Included</div>
-            </div>
-
-            <div class="detail-card">
-              <div class="detail-icon">⚽</div>
-              <div class="detail-label">Live Match</div>
-              <div class="detail-value">Full Final Match Screening</div>
-            </div>
           </div>
 
           <div class="hero-actions">
             <button type="button" id="btn-start-rsvp" class="gold-btn-glowing">
-              <span class="btn-text">RSVP NOW</span>
+              <span class="btn-text">RESERVE YOUR SEAT</span>
               <span class="btn-glow"></span>
             </button>
           </div>
         </main>
 
-        <footer class="hero-footer">
-          <div class="footer-partner-strip">
-            <span class="partner-label">Proudly hosted by</span>
-            <div class="partner-logos-row">
-
-              <!-- CBE Partner Block -->
-              <a href="https://www.combanketh.et/" target="_blank" rel="noopener" aria-label="Commercial Bank of Ethiopia" class="partner-block partner-block-cbe">
-                <img src="/assets/brand/cbe-logo-transparent.png" alt="CBE Emblem" class="partner-logo partner-logo-cbe">
-                <div class="partner-name-block">
-                  <span class="partner-name-am">የኢትዮጵያ ንግድ ባንክ</span>
-                  <span class="partner-name-en">Commercial Bank of Ethiopia</span>
-                </div>
-              </a>
-
-              <span class="partner-ampersand">&amp;</span>
-
-              <!-- Visa Partner Block -->
-              <a href="https://www.visa.com/" target="_blank" rel="noopener" aria-label="Visa" class="partner-block">
-                <img src="/assets/brand/visa-logo.svg" alt="Visa" class="partner-logo partner-logo-visa">
-              </a>
-
-            </div>
-          </div>
-        </footer>
       </div>
     </section>
 
-    <!-- ============ 3. RSVP FORM ============ -->
+    <!-- ============ 3. CHOOSE YOUR TEAM ============ -->
+    <section id="team-screen" class="screen">
+      <div class="step-container">
+        <div class="step-progress">
+          <span class="step-dot active"></span>
+          <span class="step-line"></span>
+          <span class="step-dot"></span>
+          <span class="step-line"></span>
+          <span class="step-dot"></span>
+          <span class="step-line"></span>
+          <span class="step-dot"></span>
+        </div>
+        <button type="button" class="back-link" data-back="home-screen"><span class="arrow">←</span> Back</button>
+        <div class="step-header">
+          <h2 class="step-title">Choose Your Team</h2>
+          <p class="step-subtitle">Which side are you supporting in the Final?</p>
+        </div>
+        <div class="team-cards">
+          <button type="button" class="team-card" data-team="Brazil">
+            <div class="team-flag" aria-hidden="true">🇧🇷</div>
+            <h3>Brazil</h3>
+            <p>Finalist — Home Side</p>
+          </button>
+          <button type="button" class="team-card" data-team="Argentina">
+            <div class="team-flag" aria-hidden="true">🇦🇷</div>
+            <h3>Argentina</h3>
+            <p>Finalist — Away Side</p>
+          </button>
+        </div>
+        <p class="step-hint">Tap a team to continue · +50 Fan Points</p>
+      </div>
+    </section>
+
+    <!-- ============ 4. MATCH PREDICTION ============ -->
+    <section id="prediction-screen" class="screen">
+      <div class="step-container">
+        <div class="step-progress">
+          <span class="step-dot done"></span>
+          <span class="step-line done"></span>
+          <span class="step-dot active"></span>
+          <span class="step-line"></span>
+          <span class="step-dot"></span>
+          <span class="step-line"></span>
+          <span class="step-dot"></span>
+        </div>
+        <button type="button" class="back-link" data-back="team-screen"><span class="arrow">←</span> Back</button>
+        <div class="step-header">
+          <h2 class="step-title">Predict the Match</h2>
+          <p class="step-subtitle">What's your final score prediction?</p>
+        </div>
+        <div class="prediction-form">
+          <div class="score-predictor">
+            <div class="score-team">
+              <label for="score-home">Brazil 🇧🇷</label>
+              <input type="number" id="score-home" min="0" max="20" value="1" inputmode="numeric">
+            </div>
+            <span class="score-dash">—</span>
+            <div class="score-team">
+              <label for="score-away">Argentina 🇦🇷</label>
+              <input type="number" id="score-away" min="0" max="20" value="0" inputmode="numeric">
+            </div>
+          </div>
+          <div class="input-group">
+            <label for="goalScorer">First Goal Scorer <span class="optional">(optional)</span></label>
+            <input type="text" id="goalScorer" placeholder="Player name...">
+          </div>
+          <button type="button" id="btn-prediction-continue" class="gold-btn-glowing full-width">
+            <span class="btn-text">CONTINUE TO RSVP</span>
+            <span class="btn-glow"></span>
+          </button>
+          <p class="step-hint">+50 Fan Points for your prediction</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 5. RSVP FORM ============ -->
     <section id="form-screen" class="screen">
       <div class="form-container">
-        <button type="button" id="btn-back-home" class="back-link">
-          <span class="arrow">←</span> Return to Invitation
-        </button>
-
+        <div class="step-progress">
+          <span class="step-dot done"></span>
+          <span class="step-line done"></span>
+          <span class="step-dot done"></span>
+          <span class="step-line done"></span>
+          <span class="step-dot active"></span>
+          <span class="step-line"></span>
+          <span class="step-dot"></span>
+        </div>
+        <button type="button" class="back-link" data-back="prediction-screen"><span class="arrow">←</span> Back</button>
         <div class="form-header">
-          <h2 class="form-title">VIP Attendance Confirmation</h2>
-          <p class="form-subtitle">Please verify your details below to secure your seat at this exclusive viewing party.</p>
+          <h2 class="form-title">Reserve Your Seat</h2>
+          <p class="form-subtitle">Almost there — just a few details to secure your spot.</p>
         </div>
 
         <form id="rsvp-form" class="rsvp-form" novalidate>
           <div class="form-grid">
-            <div class="input-group">
+            <div class="input-group full-width">
               <label for="fullName">Full Name <span class="required">*</span></label>
-              <input type="text" id="fullName" name="name" required placeholder="As it appears on your passport/ID" autocomplete="name">
+              <input type="text" id="fullName" name="name" required placeholder="Your full name" autocomplete="name">
               <span class="error-msg" id="err-fullName"></span>
             </div>
-
             <div class="input-group">
-              <label for="emailAddress">Email Address <span class="required">*</span></label>
+              <label for="phoneNumber">Phone Number <span class="required">*</span></label>
+              <input type="tel" id="phoneNumber" name="phone" required placeholder="+251 ..." autocomplete="tel">
+              <span class="error-msg" id="err-phoneNumber"></span>
+            </div>
+            <div class="input-group">
+              <label for="emailAddress">Email <span class="required">*</span></label>
               <input type="email" id="emailAddress" name="email" required placeholder="example@domain.com" autocomplete="email">
               <span class="error-msg" id="err-emailAddress"></span>
             </div>
-
             <div class="input-group">
-              <label for="phoneNumber">Phone Number <span class="required">*</span></label>
-              <input type="tel" id="phoneNumber" name="phone" required placeholder="+251 ... or +..." autocomplete="tel">
-              <span class="error-msg" id="err-phoneNumber"></span>
-            </div>
-
-            <div class="input-group">
-              <label for="organization">Organization <span class="required">*</span></label>
-              <input type="text" id="organization" name="organization" required placeholder="Company or Institution">
-              <span class="error-msg" id="err-organization"></span>
-            </div>
-
-
-
-            <div class="input-group">
-              <label for="mealPreference">Meal Preference</label>
-              <select id="mealPreference" name="mealPreference">
-                <option value="" disabled selected>Select dietary preference...</option>
-                <option value="No Restrictions">Standard Gourmet Menu (No Restrictions)</option>
-                <option value="Vegetarian">Vegetarian</option>
-                <option value="Vegan">Vegan</option>
-                <option value="Halal">Halal</option>
-                <option value="Gluten Free">Gluten Free</option>
+              <label for="guestCount">Number of Guests <span class="required">*</span></label>
+              <select id="guestCount" name="guestCount">
+                <option value="1" selected>Just me (1)</option>
+                <option value="2">2 guests</option>
+                <option value="3">3 guests</option>
+                <option value="4">4 guests</option>
+                <option value="5">5+ guests</option>
               </select>
-            </div>
-
-            <div class="input-group full-width">
-              <label for="specialRequests">Special Requests / Allergies</label>
-              <textarea id="specialRequests" name="specialRequests" rows="3" placeholder="Any accessibility or dietary requirements..."></textarea>
             </div>
           </div>
 
           <div id="form-error-banner" class="error-banner hidden"></div>
 
           <button type="submit" id="btn-submit-rsvp" class="gold-btn-glowing full-width">
-            <span class="btn-text">CONFIRM ATTENDANCE</span>
+            <span class="btn-text">RESERVE MY SEAT</span>
             <span class="btn-glow"></span>
           </button>
         </form>
       </div>
     </section>
 
-    <!-- ============ 4. SUCCESS SCREEN ============ -->
-    <section id="success-screen" class="screen">
+    <!-- ============ 6. RESERVATION ANIMATION ============ -->
+    <div id="reservation-overlay" class="reservation-overlay hidden">
+      <div class="reservation-animation">
+        <div class="reservation-step active" data-step="1">
+          <div class="reservation-spinner"></div>
+          <p>Checking Available Seats...</p>
+        </div>
+        <div class="reservation-step" data-step="2">
+          <div class="reservation-spinner"></div>
+          <p>Reserving Your Seat...</p>
+        </div>
+        <div class="reservation-step" data-step="3">
+          <div class="reservation-success-icon">🎉</div>
+          <p>Seat Successfully Reserved!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 7. DIGITAL MATCH PASS ============ -->
+    <section id="pass-screen" class="screen">
       <div class="success-container">
-        
-        <div class="success-icon-wrapper">
-          <div class="success-circle">
-            <span class="check-mark">✓</span>
-          </div>
-          <div class="success-pulse"></div>
+        <div class="fan-points-banner">
+          <span class="fan-points-label">Fan Points</span>
+          <span class="fan-points-value" id="fan-points-display">200</span>
         </div>
 
-        <h2 class="success-title">Thank You!</h2>
-        <p class="success-subtitle">Your RSVP has been successfully received.</p>
-        
-        <div class="success-card">
+        <h2 class="success-title">Your Match Pass</h2>
+        <p class="success-subtitle">You're officially in. Present this pass at the venue.</p>
+        <div id="email-confirmation-notice" class="email-confirmation hidden" role="status"></div>
+
+        <div class="success-card match-pass">
           <div class="ticket-header">
-            <span class="ticket-brand">FIFA WORLD CUP 2026™ VIP TICKET</span>
+            <div class="ticket-brand-row">
+              <img src="/assets/brand/visa-logo.png" alt="Visa" class="ticket-mini-logo">
+              <span class="ticket-x">×</span>
+              <img src="/assets/brand/cbe-logo-transparent.png" alt="CBE" class="ticket-mini-logo ticket-mini-cbe">
+            </div>
+            <span class="ticket-brand">DIGITAL MATCH PASS</span>
           </div>
 
           <div class="ticket-body">
             <div class="ticket-info">
               <div class="ticket-row">
                 <span class="ticket-label">Guest Name</span>
-                <span class="ticket-value" id="ticket-guest-name">Blen Gebre</span>
+                <span class="ticket-value" id="ticket-guest-name">—</span>
               </div>
               <div class="ticket-row">
-                <span class="ticket-label">Organization</span>
-                <span class="ticket-value" id="ticket-guest-org">Commercial Bank of Ethiopia</span>
+                <span class="ticket-label">Supporting Team</span>
+                <span class="ticket-value" id="ticket-team">—</span>
+              </div>
+              <div class="ticket-row">
+                <span class="ticket-label">Match Prediction</span>
+                <span class="ticket-value" id="ticket-prediction">—</span>
+              </div>
+              <div class="ticket-row">
+                <span class="ticket-label">Guests</span>
+                <span class="ticket-value" id="ticket-guests">1</span>
               </div>
               <div class="ticket-row">
                 <span class="ticket-label">Reservation ID</span>
-                <span class="ticket-value gold-text" id="ticket-res-id">VIP-2026-000145</span>
+                <span class="ticket-value gold-text" id="ticket-res-id">—</span>
               </div>
               <div class="ticket-row">
                 <span class="ticket-label">Venue</span>
-                <span class="ticket-value">VIP Lounge, CBE Headquarters, Addis Ababa</span>
+                <span class="ticket-value">VIP Lounge, CBE HQ, Addis Ababa</span>
               </div>
               <div class="ticket-row">
                 <span class="ticket-label">Date &amp; Time</span>
                 <span class="ticket-value">July 19, 2026 · 8:00 PM</span>
               </div>
+              <div class="ticket-badges" id="ticket-badges"></div>
             </div>
-
             <div class="ticket-qr-section">
               <div class="qr-border-box">
                 <img id="ticket-qr-img" src="" alt="Ticket QR Code">
               </div>
-              <span class="qr-instruction">Please present this QR code upon arrival at the venue.</span>
+              <span class="qr-instruction">Scan at entrance for VIP entry</span>
             </div>
           </div>
 
           <div class="ticket-actions">
-            <button type="button" id="btn-download-qr" class="action-btn-outline">
-              💾 Save QR Ticket
-            </button>
+            <button type="button" id="btn-download-qr" class="action-btn-outline">💾 Save Match Pass</button>
           </div>
         </div>
 
-        <p class="email-note">A confirmation email has been dispatched to your address.</p>
+        <!-- Invite Friends -->
+      
+
+        <!-- Leaderboard -->
+        <div class="leaderboard-section">
+          <h3>🏆 Fan Leaderboard</h3>
+          <div id="leaderboard-list" class="leaderboard-list">
+            <p class="leaderboard-loading">Loading...</p>
+          </div>
+        </div>
       </div>
     </section>
 
+    <!-- ============ 8. THANK YOU PAGE (post-event) ============ -->
+    <section id="thankyou-screen" class="screen">
+      <div class="thankyou-container">
+        <h2 class="thankyou-title">Thank You for Being Part of It</h2>
+        <p class="thankyou-subtitle">Visa × CBE FIFA World Cup 2026™ Final Viewing Party</p>
+
+        <div class="thankyou-gallery">
+          <div class="gallery-item" style="background-image: url('assets/cbe_visa_bg2.jpg')"></div>
+          <div class="gallery-item" style="background-image: url('assets/cbe_visa_bg3.jpg')"></div>
+          <div class="gallery-item" style="background-image: url('assets/cbe_visa_bg1.jpg')"></div>
+        </div>
+
+        <div class="winners-section">
+          <h3>🎯 Prediction Winners</h3>
+          <div id="prediction-winners" class="winners-list">
+            <p class="muted">Winners will be announced after the match.</p>
+          </div>
+        </div>
+
+        <div class="leaderboard-section">
+          <h3>🏆 Final Leaderboard</h3>
+          <div id="final-leaderboard" class="leaderboard-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HALFTIME PREDICTION MODAL ============ -->
+    <div id="halftime-modal" class="modal-overlay hidden">
+      <div class="modal-card">
+        <button type="button" class="modal-close" id="btn-close-halftime">×</button>
+        <h3>⏱ Halftime Prediction</h3>
+        <p>Predict the final score now for bonus Fan Points!</p>
+        <div class="score-predictor halftime-scores">
+          <div class="score-team">
+            <label for="ht-score-home">Brazil 🇧🇷</label>
+            <input type="number" id="ht-score-home" min="0" max="20" value="1" inputmode="numeric">
+          </div>
+          <span class="score-dash">—</span>
+          <div class="score-team">
+            <label for="ht-score-away">Argentina 🇦🇷</label>
+            <input type="number" id="ht-score-away" min="0" max="20" value="0" inputmode="numeric">
+          </div>
+        </div>
+        <button type="button" id="btn-submit-halftime" class="gold-btn-glowing full-width">
+          <span class="btn-text">SUBMIT PREDICTION</span>
+        </button>
+      </div>
+    </div>
+
   </div>
 
-  <!-- JavaScript file -->
   <script src="script.js"></script>
 </body>
 </html>

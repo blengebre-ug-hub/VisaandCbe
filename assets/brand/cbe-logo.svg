@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <circle cx="60" cy="60" r="56" stroke="#D4AF37" stroke-width="3" fill="rgba(26,5,43,0.6)"/>
+  <circle cx="60" cy="60" r="44" stroke="#C8A84B" stroke-width="1.5" fill="none" opacity="0.5"/>
+  <text x="60" y="52" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#D4AF37">CBE</text>
+  <text x="60" y="72" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#C8A84B" letter-spacing="1">COMMERCIAL BANK</text>
+  <text x="60" y="84" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#C8A84B" opacity="0.85">OF ETHIOPIA</text>
+</svg>
