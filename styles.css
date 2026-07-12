@@ -1,6 +1,8 @@
 /* ==========================================================================
    DESIGN SYSTEM & VARIABLES
    ========================================================================== */
+
+
 :root {
   /* Colors */
   --bg-primary: #090111;
@@ -1478,12 +1480,7 @@ body {
     brightness(1.3) drop-shadow(0 0 8px rgba(212, 175, 55, 0.7)) drop-shadow(0 2px 12px rgba(0, 0, 0, 0.6));
 }
 
-/* Visa branding pill (top-right) */
-.corner-logo-visa::before,
-.corner-logo-cbe::before {
-  display: none;
-  /* let filter handles the glow */
-}
+
 
 @media (max-width: 600px) {
   .corner-logo-visa {
