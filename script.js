@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
       loadingScreen.style.display = 'none';
       initPostLoading();
     }, 1000);
-  }, 5000);
+  }, 8500);
 
   function initPostLoading() {
     if (new Date() >= POST_EVENT_DATE) {
