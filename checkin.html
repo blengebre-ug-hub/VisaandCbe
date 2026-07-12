@@ -66,7 +66,12 @@
         
         <!-- Empty State -->
         <div id="state-empty" class="state-view active">
-          <div class="info-icon">🔍</div>
+          <div class="info-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
           <h3>Awaiting Scan</h3>
           <p>Scan a QR code or enter a Reservation ID to inspect registration status.</p>
         </div>
@@ -79,7 +84,12 @@
 
         <!-- Error/Not Found State -->
         <div id="state-error" class="state-view state-alert-error">
-          <div class="status-badge alert-red">✘</div>
+          <div class="status-badge alert-red">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </div>
           <h3 class="alert-title">Reservation Not Found</h3>
           <p id="error-message-text" class="alert-desc">The reservation ID is invalid or could not be found in the database.</p>
           <button type="button" class="btn-reset-view">Clear Lookup</button>
@@ -87,7 +97,11 @@
 
         <!-- Found State — Not Checked In Yet -->
         <div id="state-found-clean" class="state-view state-alert-success">
-          <div class="status-badge alert-green">✔</div>
+          <div class="status-badge alert-green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
           <h3 class="alert-title">Reservation Valid</h3>
           
           <div class="guest-details-card">
@@ -124,7 +138,13 @@
 
         <!-- Found State — Already Checked In -->
         <div id="state-found-already" class="state-view state-alert-warning">
-          <div class="status-badge alert-orange">⚠</div>
+          <div class="status-badge alert-orange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </div>
           <h3 class="alert-title">Already Checked In</h3>
           
           <div class="guest-details-card">

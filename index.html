@@ -44,7 +44,7 @@
           </div>
           <span class="host-divider">×</span>
           <div class="loading-partner-block">
-            <img src="/assets/brand/visa-logo3.png" alt="Visa" class="loading-logo loading-logo-visa">
+            <img src="/assets/brand/visa-logo3-transparent.png" alt="Visa" class="loading-logo loading-logo-visa">
             <div class="loading-partner-name">
               <span class="partner-name-en visa-text">Visa International</span>
             </div>
@@ -65,9 +65,12 @@
   <div id="app-container" class="app-container hidden">
 
     <!-- Fixed corner logos -->
-    <img src="/assets/brand/visa-logo3.png" alt="Visa" class="corner-logo corner-logo-visa">
-    <img src="/assets/brand/cbe-logo-transparent.png" alt="Commercial Bank of Ethiopia"
-      class="corner-logo corner-logo-cbe">
+    <div class="corner-brand corner-brand-visa">
+      <img src="/assets/brand/visa-logo-transparent.png" alt="Visa" class="corner-logo">
+    </div>
+    <div class="corner-brand corner-brand-cbe">
+      <img src="/assets/brand/cbe-logo-transparent.png" alt="Commercial Bank of Ethiopia" class="corner-logo">
+    </div>
 
     <!-- Background Audio (starts after loading) -->
     <audio id="bg-audio" loop preload="auto">
@@ -75,8 +78,18 @@
     </audio>
 
     <!-- Sound toggle -->
-    <button type="button" id="btn-sound-toggle" class="sound-toggle" aria-label="Mute sound"
-      aria-pressed="true">🔊</button>
+    <button type="button" id="btn-sound-toggle" class="sound-toggle" aria-label="Mute sound" aria-pressed="true">
+      <svg class="icon icon-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polygon points="4 9 8 9 12 5 12 19 8 15 4 15 4 9"></polygon>
+        <path d="M16 8a5 5 0 0 1 0 8"></path>
+        <path d="M18.5 5.5a9 9 0 0 1 0 13"></path>
+      </svg>
+      <svg class="icon icon-sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polygon points="4 9 8 9 12 5 12 19 8 15 4 15 4 9"></polygon>
+        <line x1="17" y1="9" x2="23" y2="15"></line>
+        <line x1="23" y1="9" x2="17" y2="15"></line>
+      </svg>
+    </button>
 
     <!-- ============ 2. LANDING PAGE ============ -->
     <section id="home-screen" class="screen active">
@@ -119,17 +132,34 @@
 
           <div class="details-grid">
             <div class="detail-card">
-              <div class="detail-icon">📅</div>
+              <div class="detail-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                  <line x1="16" y1="3" x2="16" y2="7"></line>
+                  <line x1="8" y1="3" x2="8" y2="7"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </div>
               <div class="detail-label">Date</div>
               <div class="detail-value">Sunday, July 19, 2026</div>
             </div>
             <div class="detail-card">
-              <div class="detail-icon">🕒</div>
+              <div class="detail-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <polyline points="12 7 12 12 16 14"></polyline>
+                </svg>
+              </div>
               <div class="detail-label">Time</div>
               <div class="detail-value">8:00 PM Onwards</div>
             </div>
             <div class="detail-card">
-              <div class="detail-icon">📍</div>
+              <div class="detail-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 21s7-7.58 7-12a7 7 0 1 0-14 0c0 4.42 7 12 7 12z"></path>
+                  <circle cx="12" cy="9.5" r="2.5"></circle>
+                </svg>
+              </div>
               <div class="detail-label">Venue</div>
               <div class="detail-value">VIP Lounge, CBE HQ<br><small>Addis Ababa, Ethiopia</small></div>
             </div>
@@ -165,12 +195,16 @@
         </div>
         <div class="team-cards">
           <button type="button" class="team-card" data-team="Brazil">
-            <div class="team-flag" aria-hidden="true">🇧🇷</div>
+            <div class="team-flag flag-brazil" aria-hidden="true">
+              <span class="flag-diamond"><span class="flag-globe"></span></span>
+            </div>
             <h3>Brazil</h3>
             <p>Finalist — Home Side</p>
           </button>
           <button type="button" class="team-card" data-team="Argentina">
-            <div class="team-flag" aria-hidden="true">🇦🇷</div>
+            <div class="team-flag flag-argentina" aria-hidden="true">
+              <span class="flag-sun"></span>
+            </div>
             <h3>Argentina</h3>
             <p>Finalist — Away Side</p>
           </button>
@@ -199,12 +233,12 @@
         <div class="prediction-form">
           <div class="score-predictor">
             <div class="score-team">
-              <label for="score-home">Brazil 🇧🇷</label>
+              <label for="score-home">Brazil</label>
               <input type="number" id="score-home" min="0" max="20" value="1" inputmode="numeric">
             </div>
             <span class="score-dash">—</span>
             <div class="score-team">
-              <label for="score-away">Argentina 🇦🇷</label>
+              <label for="score-away">Argentina</label>
               <input type="number" id="score-away" min="0" max="20" value="0" inputmode="numeric">
             </div>
           </div>
@@ -291,7 +325,12 @@
           <p>Reserving Your Seat...</p>
         </div>
         <div class="reservation-step" data-step="3">
-          <div class="reservation-success-icon">🎉</div>
+          <div class="reservation-success-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="7.5 12.5 10.5 15.5 16.5 8.5"></polyline>
+            </svg>
+          </div>
           <p>Seat Successfully Reserved!</p>
         </div>
       </div>
@@ -312,7 +351,7 @@
         <div class="success-card match-pass">
           <div class="ticket-header">
             <div class="ticket-brand-row">
-              <img src="/assets/brand/visa-logo.png" alt="Visa" class="ticket-mini-logo">
+              <img src="/assets/brand/visa-logo-transparent.png" alt="Visa" class="ticket-mini-logo">
               <span class="ticket-x">×</span>
               <img src="/assets/brand/cbe-logo-transparent.png" alt="CBE" class="ticket-mini-logo ticket-mini-cbe">
             </div>
@@ -360,7 +399,14 @@
           </div>
 
           <div class="ticket-actions">
-            <button type="button" id="btn-download-qr" class="action-btn-outline">💾 Save Match Pass</button>
+            <button type="button" id="btn-download-qr" class="action-btn-outline">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 3v12"></path>
+                <polyline points="7 11 12 16 17 11"></polyline>
+                <path d="M5 21h14"></path>
+              </svg>
+              Save Match Pass
+            </button>
           </div>
         </div>
 
@@ -369,7 +415,7 @@
 
         <!-- Leaderboard -->
         <div class="leaderboard-section">
-          <h3>🏆 Fan Leaderboard</h3>
+          <h3><svg class="heading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8"></path><path d="M12 17v4"></path><path d="M7 4h10v4a5 5 0 0 1-10 0V4z"></path><path d="M7 5H4.5A2.5 2.5 0 0 0 7 9.5"></path><path d="M17 5h2.5A2.5 2.5 0 0 1 17 9.5"></path></svg> Fan Leaderboard</h3>
           <div id="leaderboard-list" class="leaderboard-list">
             <p class="leaderboard-loading">Loading...</p>
           </div>
@@ -390,14 +436,14 @@
         </div>
 
         <div class="winners-section">
-          <h3>🎯 Prediction Winners</h3>
+          <h3><svg class="heading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><circle cx="12" cy="12" r="4.5"></circle><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"></circle></svg> Prediction Winners</h3>
           <div id="prediction-winners" class="winners-list">
             <p class="muted">Winners will be announced after the match.</p>
           </div>
         </div>
 
         <div class="leaderboard-section">
-          <h3>🏆 Final Leaderboard</h3>
+          <h3><svg class="heading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8"></path><path d="M12 17v4"></path><path d="M7 4h10v4a5 5 0 0 1-10 0V4z"></path><path d="M7 5H4.5A2.5 2.5 0 0 0 7 9.5"></path><path d="M17 5h2.5A2.5 2.5 0 0 1 17 9.5"></path></svg> Final Leaderboard</h3>
           <div id="final-leaderboard" class="leaderboard-list"></div>
         </div>
       </div>
@@ -406,17 +452,17 @@
     <!-- ============ HALFTIME PREDICTION MODAL ============ -->
     <div id="halftime-modal" class="modal-overlay hidden">
       <div class="modal-card">
-        <button type="button" class="modal-close" id="btn-close-halftime">×</button>
-        <h3>⏱ Halftime Prediction</h3>
+        <button type="button" class="modal-close" id="btn-close-halftime" aria-label="Close">×</button>
+        <h3><svg class="heading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><line x1="12" y1="13" x2="12" y2="9"></line><line x1="9" y1="2" x2="15" y2="2"></line></svg> Halftime Prediction</h3>
         <p>Predict the final score now for bonus Fan Points!</p>
         <div class="score-predictor halftime-scores">
           <div class="score-team">
-            <label for="ht-score-home">Brazil 🇧🇷</label>
+            <label for="ht-score-home">Brazil</label>
             <input type="number" id="ht-score-home" min="0" max="20" value="1" inputmode="numeric">
           </div>
           <span class="score-dash">—</span>
           <div class="score-team">
-            <label for="ht-score-away">Argentina 🇦🇷</label>
+            <label for="ht-score-away">Argentina</label>
             <input type="number" id="ht-score-away" min="0" max="20" value="0" inputmode="numeric">
           </div>
         </div>

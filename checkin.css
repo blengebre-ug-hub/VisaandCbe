@@ -261,9 +261,13 @@ body {
 
 /* Empty State */
 .info-icon {
-  font-size: 48px;
   margin-bottom: 16px;
   color: #a19bb8;
+}
+
+.info-icon svg {
+  width: 44px;
+  height: 44px;
 }
 
 .state-view h3 {
@@ -325,9 +329,12 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 32px;
-  font-weight: bold;
   margin: 0 auto 16px auto;
+}
+
+.status-badge svg {
+  width: 30px;
+  height: 30px;
 }
 
 .alert-green {

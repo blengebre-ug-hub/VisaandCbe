@@ -110,9 +110,9 @@ function calculateFanPoints({ team, scoreHome, scoreAway, referredBy }) {
 function calculateBadges({ team, scoreHome, scoreAway, referredBy, createdAt }) {
   const badges = [];
   const earlyBirdCutoff = new Date('2026-07-15T00:00:00+03:00');
-  if (new Date(createdAt || Date.now()) < earlyBirdCutoff) badges.push('🏅 Early Bird');
-  if (team && scoreHome !== undefined) badges.push('⚽️ Match Predictor');
-  if (referredBy) badges.push('🔥 Super Fan');
+  if (new Date(createdAt || Date.now()) < earlyBirdCutoff) badges.push('Early Bird');
+  if (team && scoreHome !== undefined) badges.push('Match Predictor');
+  if (referredBy) badges.push('Super Fan');
   return badges;
 }
 
@@ -224,8 +224,8 @@ app.post('/api/rsvp', async (req, res) => {
     if (referredBy) {
       await pool.query(
         `UPDATE rsvps SET fan_points = fan_points + 100,
-         badges = CASE WHEN '🔥 Super Fan' = ANY(badges) THEN badges
-                  ELSE array_append(COALESCE(badges, '{}'), '🔥 Super Fan') END
+         badges = CASE WHEN 'Super Fan' = ANY(badges) THEN badges
+                  ELSE array_append(COALESCE(badges, '{}'), 'Super Fan') END
          WHERE referral_code = $1`,
         [referredBy]
       );
@@ -286,7 +286,7 @@ app.post('/api/rsvp', async (req, res) => {
         <tr>
           <td style="padding:40px 40px 0;">
             <p style="margin:0 0 8px;font-size:13px;font-weight:600;color:#0a1547;text-transform:uppercase;letter-spacing:2px;">Dear Guest,</p>
-            <h2 style="margin:0 0 20px;font-size:22px;font-weight:700;color:#0a1547;">${name.trim()} 🎉</h2>
+            <h2 style="margin:0 0 20px;font-size:22px;font-weight:700;color:#0a1547;">${name.trim()}</h2>
             <p style="margin:0 0 24px;font-size:15px;line-height:1.7;color:#444;">
               Your reservation for the <strong>FIFA World Cup 2026™ Final Viewing Party</strong> has been confirmed.
               Please present the QR code below upon arrival to access the VIP lounge.
@@ -305,27 +305,27 @@ app.post('/api/rsvp', async (req, res) => {
                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                   <tr>
                     <td width="50%" style="padding-bottom:14px;">
-                      <p style="margin:0 0 3px;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#888;">📅 Date</p>
+                      <p style="margin:0 0 3px;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#888;">Date</p>
                       <p style="margin:0;font-size:14px;font-weight:600;color:#0a1547;">Sunday, July 19, 2026</p>
                     </td>
                     <td width="50%" style="padding-bottom:14px;">
-                      <p style="margin:0 0 3px;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#888;">🕗 Time</p>
+                      <p style="margin:0 0 3px;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#888;">Time</p>
                       <p style="margin:0;font-size:14px;font-weight:600;color:#0a1547;">8:00 PM Onwards</p>
                     </td>
                   </tr>
                   <tr>
                     <td colspan="2" style="padding-bottom:14px;">
-                      <p style="margin:0 0 3px;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#888;">📍 Venue</p>
+                      <p style="margin:0 0 3px;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#888;">Venue</p>
                       <p style="margin:0;font-size:14px;font-weight:600;color:#0a1547;">VIP Lounge, Commercial Bank of Ethiopia HQ<br><span style="font-weight:400;color:#555;">Addis Ababa, Ethiopia</span></p>
                     </td>
                   </tr>
                   <tr>
                     <td width="50%">
-                      <p style="margin:0 0 3px;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#888;">⚽ Supporting Team</p>
+                      <p style="margin:0 0 3px;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#888;">Supporting Team</p>
                       <p style="margin:0;font-size:14px;font-weight:600;color:#0a1547;">${team || '—'}</p>
                     </td>
                     <td width="50%">
-                      <p style="margin:0 0 3px;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#888;">👥 Guests</p>
+                      <p style="margin:0 0 3px;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#888;">Guests</p>
                       <p style="margin:0;font-size:14px;font-weight:600;color:#0a1547;">${guests}</p>
                     </td>
                   </tr>
@@ -347,7 +347,7 @@ app.post('/api/rsvp', async (req, res) => {
                     <img src="cid:qrcode" alt="VIP Entry QR Code" width="180" height="180" style="display:block;border-radius:6px;">
                   </div>
                   <p style="margin:16px 0 0;color:#a8bce8;font-size:13px;">Scan at the entrance for VIP access</p>
-                  <p style="margin:10px 0 0;"><a href="${qrImageUrl}" style="color:#D4AF37;font-size:12px;text-decoration:none;">📲 View QR Code Online</a></p>
+                  <p style="margin:10px 0 0;"><a href="${qrImageUrl}" style="color:#D4AF37;font-size:12px;text-decoration:none;">View QR Code Online</a></p>
                 </td>
               </tr>
             </table>
@@ -359,7 +359,7 @@ app.post('/api/rsvp', async (req, res) => {
           <td style="padding:0 40px 32px;">
             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#fff9e6;border:1px solid #f0d060;border-radius:10px;">
               <tr><td style="padding:18px 22px;">
-                <p style="margin:0;font-size:13px;color:#a07000;font-weight:600;">⭐ You've earned <strong style="font-size:18px;color:#c8860a;">${fanPoints} Fan Points</strong> for registering!</p>
+                <p style="margin:0;font-size:13px;color:#a07000;font-weight:600;">You've earned <strong style="font-size:18px;color:#c8860a;">${fanPoints} Fan Points</strong> for registering!</p>
                 <p style="margin:6px 0 0;font-size:12px;color:#997000;">Share your referral code to earn more bonus points.</p>
               </td></tr>
             </table>
@@ -440,7 +440,7 @@ Commercial Bank of Ethiopia & Visa International
           from:        `"CBE & Visa VIP Events" <${process.env.SMTP_USER}>`,
           to:          cleanEmail,
           replyTo:     process.env.SMTP_USER,
-          subject:     `✅ Your FIFA World Cup 2026 VIP Pass — ${reservationId}`,
+          subject:     `Your FIFA World Cup 2026 VIP Pass — ${reservationId}`,
           text:        plainTextBody,
           html:        emailBodyHTML,
           attachments: [{ filename: `VIP-Pass-QRCode-${reservationId}.png`, content: qrBuffer, cid: 'qrcode' }]

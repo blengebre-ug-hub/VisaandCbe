@@ -66,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (bgAudio) bgAudio.muted = shouldMute;
     if (loadingVideo) loadingVideo.muted = shouldMute;
     if (btnSoundToggle) {
-      btnSoundToggle.textContent = soundEnabled ? '🔊' : '🔇';
       btnSoundToggle.classList.toggle('sound-off', !soundEnabled);
       btnSoundToggle.setAttribute('aria-label', soundEnabled ? 'Mute sound' : 'Unmute sound');
       btnSoundToggle.setAttribute('aria-pressed', String(soundEnabled));
