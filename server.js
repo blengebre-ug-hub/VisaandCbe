@@ -139,7 +139,6 @@ function getFormattedTime() {
   hours = hours % 12 || 12;
   return `${hours}:${mins} ${ampm}`;
 }
-
 // ─── API: Submit RSVP ─────────────────────────────────────────────────────────
 app.post('/api/rsvp', async (req, res) => {
   const {
@@ -219,7 +218,6 @@ app.post('/api/rsvp', async (req, res) => {
       ]
     );
 
-    // Award referrer bonus points
     if (referredBy) {
       await pool.query(
         `UPDATE rsvps SET fan_points = fan_points + 100,
@@ -232,7 +230,7 @@ app.post('/api/rsvp', async (req, res) => {
 
     console.log(`✅ RSVP saved: ${reservationId} — ${name.trim()} (${fanPoints} pts)`);
 
-    // ── 5. Build confirmation email HTML ────────────────────────────────────
+    // ── 5. Build Clean Confirmation Email HTML ─────────────────────────────
     const qrImageUrl = `${process.env.BASE_URL || `http://localhost:${PORT}`}/qrcodes/${reservationId}.png`;
     const emailBodyHTML = `
 <!DOCTYPE html>
@@ -255,7 +253,6 @@ app.post('/api/rsvp', async (req, res) => {
         <!-- HEADER -->
         <tr>
           <td style="background:linear-gradient(135deg,#0a1547 0%,#1a2f8f 60%,#0d1b4b 100%);padding:36px 40px;text-align:center;">
-            <!-- Partner Logos -->
             <table width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr>
                 <td align="center" style="padding-bottom:24px;">
@@ -294,7 +291,7 @@ app.post('/api/rsvp', async (req, res) => {
         <tr>
           <td style="padding:0 40px 24px;">
             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0f4ff;border-radius:12px;border-left:4px solid #1a2f8f;overflow:hidden;">
-              <tr><td style="padding:24px 24px 8px;">
+              <tr><td style="padding:24px 24px 24px;">
                 <p style="margin:0 0 4px;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#888;">Reservation ID</p>
                 <p style="margin:0 0 16px;font-size:16px;font-weight:700;color:#0a1547;font-family:monospace;">${reservationId}</p>
 
@@ -310,7 +307,7 @@ app.post('/api/rsvp', async (req, res) => {
                     </td>
                   </tr>
                   <tr>
-                    <td colspan="2" style="padding-bottom:14px;">
+                    <td colspan="2">
                       <p style="margin:0 0 3px;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#888;">Venue</p>
                       <p style="margin:0;font-size:14px;font-weight:600;color:#0a1547;">VIP Lounge, Commercial Bank of Ethiopia HQ<br><span style="font-weight:400;color:#555;">Addis Ababa, Ethiopia</span></p>
                     </td>
@@ -389,6 +386,7 @@ app.post('/api/rsvp', async (req, res) => {
           auth:   { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
           tls:    { rejectUnauthorized: false }
         });
+        
         const plainTextBody = `
 Dear ${name.trim()},
 
@@ -418,18 +416,7 @@ Commercial Bank of Ethiopia & Visa International
         emailSent = true;
         console.log(`📧 Confirmation email sent to: ${cleanEmail}`);
       } catch (mailErr) {
-        console.error('⚠️  SMTP send failed (backup HTML saved locally):');
-        console.error('   Code:', mailErr.code);
-        console.error('   Message:', mailErr.message);
-        if (mailErr.message && mailErr.message.includes('Application-specific')) {
-          console.error('   FIX: Gmail requires an App Password. Go to https://myaccount.google.com/apppasswords');
-        }
-      }
-    } else {
-      if (!cleanEmail) {
-        console.log(`📁 No email address provided — local backup only: data/sent_emails/email-${reservationId}.html`);
-      } else {
-        console.log(`📁 SMTP not configured — local backup: data/sent_emails/email-${reservationId}.html`);
+        console.error('⚠️  SMTP send failed:', mailErr.message);
       }
     }
 
@@ -448,89 +435,6 @@ Commercial Bank of Ethiopia & Visa International
     return res.status(500).json({ error: 'Internal server error. Please try again.' });
   }
 });
-
-// ─── API: Lookup Reservation (Scanner) ────────────────────────────────────────
-app.get('/api/rsvp/:id', async (req, res) => {
-  const id = req.params.id.trim().toUpperCase();
-  try {
-    const result = await pool.query('SELECT * FROM rsvps WHERE id = $1', [id]);
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Reservation not found.' });
-    }
-
-    // Map snake_case DB columns → camelCase for frontend
-    const r = result.rows[0];
-    return res.status(200).json({
-      id:              r.id,
-      name:            r.name,
-      email:           r.email,
-      phone:           r.phone,
-      organization:    r.organization,
-      mealPreference:  r.meal_preference,
-      specialRequests: r.special_requests,
-      checkInStatus:   r.check_in_status,
-      checkInTime:     r.check_in_time,
-      createdAt:       r.created_at
-    });
-  } catch (err) {
-    console.error('❌ Lookup error:', err.message);
-    return res.status(500).json({ error: 'Database error.' });
-  }
-});
-
-// ─── API: Check In Guest ──────────────────────────────────────────────────────
-app.post('/api/rsvp/:id/checkin', async (req, res) => {
-  const id = req.params.id.trim().toUpperCase();
-  try {
-    // Find guest
-    const found = await pool.query('SELECT * FROM rsvps WHERE id = $1', [id]);
-    if (found.rows.length === 0) {
-      return res.status(404).json({ error: 'Reservation not found.' });
-    }
-
-    const rsvp = found.rows[0];
-
-    // Already checked in?
-    if (rsvp.check_in_status === 'Checked In') {
-      return res.status(400).json({
-        error:       'Already Checked In',
-        checkInTime: rsvp.check_in_time
-      });
-    }
-
-    // Perform check-in
-    const checkInTime = getFormattedTime();
-    const updated = await pool.query(
-      `UPDATE rsvps
-          SET check_in_status = $1, check_in_time = $2
-        WHERE id = $3
-        RETURNING *`,
-      ['Checked In', checkInTime, id]
-    );
-
-    const r = updated.rows[0];
-    console.log(`✅ Checked in: ${r.name} (${id}) at ${checkInTime}`);
-
-    return res.status(200).json({
-      success: true,
-      rsvp: {
-        id:              r.id,
-        name:            r.name,
-        email:           r.email,
-        phone:           r.phone,
-        organization:    r.organization,
-        mealPreference:  r.meal_preference,
-        specialRequests: r.special_requests,
-        checkInStatus:   r.check_in_status,
-        checkInTime:     r.check_in_time
-      }
-    });
-  } catch (err) {
-    console.error('❌ Check-in error:', err.message);
-    return res.status(500).json({ error: 'Database error during check-in.' });
-  }
-});
-
 // ─── API: Leaderboard ─────────────────────────────────────────────────────────
 app.get('/api/leaderboard', async (req, res) => {
   try {
