@@ -230,7 +230,7 @@ app.post('/api/rsvp', async (req, res) => {
 
     console.log(`✅ RSVP saved: ${reservationId} — ${name.trim()} (${fanPoints} pts)`);
 
-    // ── 5. Build Clean Confirmation Email HTML ─────────────────────────────
+    // ── 5. Build Clean Confirmation Email HTML (Updated Venue & Time) ──────
     const qrImageUrl = `${process.env.BASE_URL || `http://localhost:${PORT}`}/qrcodes/${reservationId}.png`;
     const emailBodyHTML = `
 <!DOCTYPE html>
@@ -245,12 +245,10 @@ app.post('/api/rsvp', async (req, res) => {
     <tr><td align="center" style="padding:40px 20px;">
       <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
 
-        <!-- TOP GOLD BAR -->
         <tr>
           <td style="height:6px;background:linear-gradient(90deg,#D4AF37 0%,#f5e06e 50%,#D4AF37 100%);"></td>
         </tr>
 
-        <!-- HEADER -->
         <tr>
           <td style="background:linear-gradient(135deg,#0a1547 0%,#1a2f8f 60%,#0d1b4b 100%);padding:36px 40px;text-align:center;">
             <table width="100%" cellpadding="0" cellspacing="0" border="0">
@@ -275,7 +273,6 @@ app.post('/api/rsvp', async (req, res) => {
           </td>
         </tr>
 
-        <!-- WELCOME BODY -->
         <tr>
           <td style="padding:40px 40px 0;">
             <p style="margin:0 0 8px;font-size:13px;font-weight:600;color:#0a1547;text-transform:uppercase;letter-spacing:2px;">Dear Guest,</p>
@@ -287,7 +284,6 @@ app.post('/api/rsvp', async (req, res) => {
           </td>
         </tr>
 
-        <!-- EVENT DETAILS BOX -->
         <tr>
           <td style="padding:0 40px 24px;">
             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0f4ff;border-radius:12px;border-left:4px solid #1a2f8f;overflow:hidden;">
@@ -303,13 +299,13 @@ app.post('/api/rsvp', async (req, res) => {
                     </td>
                     <td width="50%" style="padding-bottom:14px;">
                       <p style="margin:0 0 3px;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#888;">Time</p>
-                      <p style="margin:0;font-size:14px;font-weight:600;color:#0a1547;">8:00 PM Onwards</p>
+                      <p style="margin:0;font-size:14px;font-weight:600;color:#0a1547;">6:00 PM Onwards</p>
                     </td>
                   </tr>
                   <tr>
                     <td colspan="2">
                       <p style="margin:0 0 3px;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#888;">Venue</p>
-                      <p style="margin:0;font-size:14px;font-weight:600;color:#0a1547;">VIP Lounge, Commercial Bank of Ethiopia HQ<br><span style="font-weight:400;color:#555;">Addis Ababa, Ethiopia</span></p>
+                      <p style="margin:0;font-size:14px;font-weight:600;color:#0a1547;">Science Museum<br><span style="font-weight:400;color:#555;">Addis Ababa, Ethiopia</span></p>
                     </td>
                   </tr>
                 </table>
@@ -318,7 +314,6 @@ app.post('/api/rsvp', async (req, res) => {
           </td>
         </tr>
 
-        <!-- QR CODE SECTION -->
         <tr>
           <td style="padding:0 40px 32px;">
             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:linear-gradient(135deg,#0a1547,#1a2f8f);border-radius:12px;">
@@ -336,10 +331,8 @@ app.post('/api/rsvp', async (req, res) => {
           </td>
         </tr>
 
-        <!-- DIVIDER -->
         <tr><td style="padding:0 40px;"><hr style="border:none;border-top:1px solid #eee;"></td></tr>
 
-        <!-- FOOTER -->
         <tr>
           <td style="padding:28px 40px;text-align:center;background:#f8f9ff;">
             <table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto 16px;">
@@ -359,7 +352,6 @@ app.post('/api/rsvp', async (req, res) => {
           </td>
         </tr>
 
-        <!-- BOTTOM GOLD BAR -->
         <tr>
           <td style="height:4px;background:linear-gradient(90deg,#D4AF37 0%,#f5e06e 50%,#D4AF37 100%);"></td>
         </tr>
@@ -394,8 +386,8 @@ Your reservation for the FIFA World Cup 2026 Final Viewing Party has been confir
 
 Reservation ID: ${reservationId}
 Date: Sunday, July 19, 2026
-Time: 8:00 PM Onwards
-Venue: VIP Lounge, Commercial Bank of Ethiopia HQ, Addis Ababa, Ethiopia
+Time: 6:00 PM Onwards
+Venue: Science Museum, Addis Ababa, Ethiopia
 
 You can view your QR Code entry pass here:
 ${qrImageUrl}
