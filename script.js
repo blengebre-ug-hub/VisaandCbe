@@ -6,53 +6,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const screens = {
     home: document.getElementById('home-screen'),
-    team: document.getElementById('team-screen'),
-    prediction: document.getElementById('prediction-screen'),
     form: document.getElementById('form-screen'),
-    pass: document.getElementById('pass-screen'),
-    thankyou: document.getElementById('thankyou-screen')
+    pass: document.getElementById('pass-screen')
   };
 
   const reservationOverlay = document.getElementById('reservation-overlay');
-  const halftimeModal = document.getElementById('halftime-modal');
 
   const btnStartRsvp = document.getElementById('btn-start-rsvp');
-  const btnPredictionContinue = document.getElementById('btn-prediction-continue');
   const rsvpForm = document.getElementById('rsvp-form');
   const btnSubmitRsvp = document.getElementById('btn-submit-rsvp');
   const formErrorBanner = document.getElementById('form-error-banner');
 
   const ticketGuestName = document.getElementById('ticket-guest-name');
-  const ticketTeam = document.getElementById('ticket-team');
-  const ticketPrediction = document.getElementById('ticket-prediction');
-  const ticketGuests = document.getElementById('ticket-guests');
   const ticketResId = document.getElementById('ticket-res-id');
   const ticketQrImg = document.getElementById('ticket-qr-img');
-  const ticketBadges = document.getElementById('ticket-badges');
-  const fanPointsDisplay = document.getElementById('fan-points-display');
   const btnDownloadQr = document.getElementById('btn-download-qr');
-  const referralLink = document.getElementById('referral-link');
-  const btnCopyReferral = document.getElementById('btn-copy-referral');
-  const leaderboardList = document.getElementById('leaderboard-list');
   const emailConfirmationNotice = document.getElementById('email-confirmation-notice');
 
   // ─── State ──────────────────────────────────────────────────────────────────
   const EVENT_DATE = new Date('2026-07-19T20:00:00+03:00');
-  const POST_EVENT_DATE = new Date('2026-07-20T06:00:00+03:00');
-  const HALFTIME_START = new Date('2026-07-19T21:30:00+03:00');
-  const HALFTIME_END = new Date('2026-07-19T22:00:00+03:00');
-
-  const userData = {
-    team: '',
-    scoreHome: 1,
-    scoreAway: 0,
-    goalScorer: '',
-    fanPoints: 0,
-    badges: [],
-    reservationId: '',
-    qrDataUrl: '',
-    referralCode: ''
-  };
 
   let currentReservationId = '';
   let currentQrDataUrl = '';
@@ -76,14 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 8500);
 
   function initPostLoading() {
-    if (new Date() >= POST_EVENT_DATE) {
-      switchScreen(null, screens.thankyou);
-      loadLeaderboard(document.getElementById('final-leaderboard'));
-      return;
-    }
     startCountdown();
-    checkHalftime();
-    setInterval(checkHalftime, 60000);
   }
 
   // ─── 3. COUNTDOWN TIMER ─────────────────────────────────────────────────────
@@ -129,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   btnStartRsvp.addEventListener('click', () => {
-    switchScreen(screens.home, screens.team);
+    switchScreen(screens.home, screens.form);
   });
 
   document.querySelectorAll('.back-link[data-back]').forEach(btn => {
@@ -138,24 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const active = document.querySelector('.screen.active');
       if (target) switchScreen(active, target);
     });
-  });
-
-  // ─── 5. TEAM SELECTION ──────────────────────────────────────────────────────
-  document.querySelectorAll('.team-card').forEach(card => {
-    card.addEventListener('click', () => {
-      document.querySelectorAll('.team-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      userData.team = card.dataset.team;
-      setTimeout(() => switchScreen(screens.team, screens.prediction), 400);
-    });
-  });
-
-  // ─── 6. PREDICTION ──────────────────────────────────────────────────────────
-  btnPredictionContinue.addEventListener('click', () => {
-    userData.scoreHome = parseInt(document.getElementById('score-home').value, 10) || 0;
-    userData.scoreAway = parseInt(document.getElementById('score-away').value, 10) || 0;
-    userData.goalScorer = document.getElementById('goalScorer').value.trim();
-    switchScreen(screens.prediction, screens.form);
   });
 
   // ─── 7. RSVP FORM ───────────────────────────────────────────────────────────
@@ -168,11 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
       name: document.getElementById('fullName').value.trim(),
       email: document.getElementById('emailAddress').value.trim(),
       phone: document.getElementById('phoneNumber').value.trim(),
-      guestCount: parseInt(document.getElementById('guestCount').value, 10) || 1,
-      team: userData.team,
-      scoreHome: userData.scoreHome,
-      scoreAway: userData.scoreAway,
-      goalScorer: userData.goalScorer,
+      guestCount: 1,
       referredBy: new URLSearchParams(window.location.search).get('ref') || ''
     };
 
@@ -183,12 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
       showInputError('emailAddress', 'Email is required to receive your confirmation & QR code.'); hasError = true;
     } else if (!validateEmail(formData.email)) {
       showInputError('emailAddress', 'Please enter a valid email address.'); hasError = true;
-    }
-    if (!formData.team) {
-      formErrorBanner.textContent = 'Please choose your team first.';
-      formErrorBanner.classList.remove('hidden');
-      switchScreen(screens.form, screens.team);
-      return;
     }
     if (hasError) {
       formErrorBanner.textContent = 'Please fill out all required fields.';
@@ -214,15 +151,11 @@ document.addEventListener('DOMContentLoaded', () => {
         currentReservationId = result.reservationId;
         currentQrDataUrl = result.qrDataUrl;
         localStorage.setItem('lastReservationId', result.reservationId);
-        userData.fanPoints = result.fanPoints || 200;
-        userData.badges = result.badges || [];
-        userData.referralCode = result.referralCode || '';
 
         renderMatchPass(formData, result);
         showEmailConfirmationNotice(result, formData);
         reservationOverlay.classList.add('hidden');
         switchScreen(screens.form, screens.pass);
-        loadLeaderboard(leaderboardList);
       } else {
         reservationOverlay.classList.add('hidden');
         formErrorBanner.textContent = result.error || 'Registration failed.';
@@ -273,28 +206,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // ─── 9. RENDER MATCH PASS ───────────────────────────────────────────────────
   function renderMatchPass(formData, result) {
     ticketGuestName.textContent = formData.name;
-    ticketTeam.textContent = formData.team;
-    ticketPrediction.textContent = `${formData.scoreHome} - ${formData.scoreAway}` +
-      (formData.goalScorer ? ` · ${formData.goalScorer}` : '');
-    ticketGuests.textContent = formData.guestCount;
     ticketResId.textContent = result.reservationId;
     ticketQrImg.src = result.qrDataUrl;
     ticketQrImg.alt = `QR code for reservation ${result.reservationId}`;
-    fanPointsDisplay.textContent = result.fanPoints;
-
-    ticketBadges.innerHTML = '';
-    (result.badges || []).forEach(badge => {
-      const span = document.createElement('span');
-      span.className = 'badge-pill';
-      span.textContent = badge;
-      ticketBadges.appendChild(span);
-    });
-
-    if (referralLink) {
-    const refUrl =
-        `${window.location.origin}${window.location.pathname}?ref=${result.referralCode}`;
-    referralLink.value = refUrl;
-}
   }
 
   function showEmailConfirmationNotice(result, formData) {
@@ -308,82 +222,6 @@ document.addEventListener('DOMContentLoaded', () => {
       emailConfirmationNotice.classList.add('is-warning');
     }
   }
-
-  // ─── 10. REFERRAL COPY ──────────────────────────────────────────────────────
-  if (btnCopyReferral && referralLink) {
-    btnCopyReferral.addEventListener('click', async () => {
-        try {
-            await navigator.clipboard.writeText(referralLink.value);
-            btnCopyReferral.textContent = 'Copied!';
-            setTimeout(() => {
-                btnCopyReferral.textContent = 'Copy Link';
-            }, 2000);
-        } catch {
-            referralLink.select();
-            document.execCommand('copy');
-            btnCopyReferral.textContent = 'Copied!';
-        }
-    });
-}
-
-  // ─── 11. LEADERBOARD ────────────────────────────────────────────────────────
-  async function loadLeaderboard(container) {
-    if (!container) return;
-    try {
-      const res = await fetch('/api/leaderboard');
-      const data = await res.json();
-      if (!data.leaderboard || data.leaderboard.length === 0) {
-        container.innerHTML = '<p class="muted">Be the first to register!</p>';
-        return;
-      }
-      container.innerHTML = data.leaderboard.map((entry, i) => `
-        <div class="leaderboard-row ${i < 3 ? 'top-' + (i + 1) : ''}">
-          <span class="lb-rank">${i + 1}</span>
-          <span class="lb-name">${escapeHtml(entry.name)}</span>
-          <span class="lb-points">${entry.fanPoints} pts</span>
-        </div>
-      `).join('');
-    } catch {
-      container.innerHTML = '<p class="muted">Leaderboard unavailable</p>';
-    }
-  }
-
-  // ─── 12. HALFTIME PREDICTION ────────────────────────────────────────────────
-  function checkHalftime() {
-    const now = new Date();
-    if (now >= HALFTIME_START && now <= HALFTIME_END && currentReservationId) {
-      const dismissed = sessionStorage.getItem('halftime-dismissed');
-      if (!dismissed) halftimeModal.classList.remove('hidden');
-    }
-  }
-
-  document.getElementById('btn-close-halftime')?.addEventListener('click', () => {
-    halftimeModal.classList.add('hidden');
-    sessionStorage.setItem('halftime-dismissed', '1');
-  });
-
-  document.getElementById('btn-submit-halftime')?.addEventListener('click', async () => {
-    const htHome = parseInt(document.getElementById('ht-score-home').value, 10) || 0;
-    const htAway = parseInt(document.getElementById('ht-score-away').value, 10) || 0;
-    const id = currentReservationId || localStorage.getItem('lastReservationId');
-    if (!id) return;
-
-    try {
-      const res = await fetch(`/api/rsvp/${id}/halftime`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scoreHome: htHome, scoreAway: htAway })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        fanPointsDisplay.textContent = data.fanPoints;
-        halftimeModal.classList.add('hidden');
-        alert('Halftime prediction submitted! +25 bonus points.');
-      }
-    } catch {
-      alert('Could not submit prediction.');
-    }
-  });
 
   // ─── 13. DOWNLOAD QR ────────────────────────────────────────────────────────
   btnDownloadQr.addEventListener('click', () => {
@@ -418,11 +256,5 @@ document.addEventListener('DOMContentLoaded', () => {
     btnSubmitRsvp.querySelector('.btn-text').textContent =
       isLoading ? 'PROCESSING...' : 'RESERVE MY SEAT';
     btnSubmitRsvp.style.opacity = isLoading ? '0.7' : '1';
-  }
-
-  function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
   }
 });

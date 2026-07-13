@@ -143,8 +143,7 @@ function getFormattedTime() {
 // ─── API: Submit RSVP ─────────────────────────────────────────────────────────
 app.post('/api/rsvp', async (req, res) => {
   const {
-    name, email, phone, organization, mealPreference, specialRequests,
-    team, scoreHome, scoreAway, goalScorer, guestCount, referredBy
+    name, email, phone, organization, mealPreference, specialRequests, referredBy
   } = req.body;
 
   if (!name || !phone) {
@@ -189,9 +188,9 @@ app.post('/api/rsvp', async (req, res) => {
     fs.writeFileSync(path.join(EMAILS_DIR, `qrcode-${reservationId}.png`), qrBuffer);
 
     const referralCode = generateReferralCode();
-    const fanPoints = calculateFanPoints({ team, scoreHome, scoreAway, referredBy });
-    const badges = calculateBadges({ team, scoreHome, scoreAway, referredBy });
-    const guests = parseInt(guestCount, 10) || 1;
+    const fanPoints = calculateFanPoints({ referredBy });
+    const badges = calculateBadges({ referredBy });
+    const guests = 1;
 
     // ── 4. Save to PostgreSQL ───────────────────────────────────────────────
     await pool.query(
@@ -208,10 +207,10 @@ app.post('/api/rsvp', async (req, res) => {
         cleanOrg,
         (mealPreference  || '').trim(),
         (specialRequests || '').trim(),
-        team || null,
-        scoreHome ?? null,
-        scoreAway ?? null,
-        (goalScorer || '').trim() || null,
+        null, // team
+        null, // scoreHome
+        null, // scoreAway
+        null, // goalScorer
         guests,
         fanPoints,
         badges,
@@ -235,9 +234,6 @@ app.post('/api/rsvp', async (req, res) => {
 
     // ── 5. Build confirmation email HTML ────────────────────────────────────
     const qrImageUrl = `${process.env.BASE_URL || `http://localhost:${PORT}`}/qrcodes/${reservationId}.png`;
-    const badgesHtml = (badges && badges.length)
-      ? `<div style="margin-top:10px;">${badges.map(b => `<span style="display:inline-block;background:#f0e6ff;color:#5c1e99;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;margin:3px;">${b}</span>`).join('')}</div>`
-      : '';
     const emailBodyHTML = `
 <!DOCTYPE html>
 <html lang="en">
@@ -319,18 +315,7 @@ app.post('/api/rsvp', async (req, res) => {
                       <p style="margin:0;font-size:14px;font-weight:600;color:#0a1547;">VIP Lounge, Commercial Bank of Ethiopia HQ<br><span style="font-weight:400;color:#555;">Addis Ababa, Ethiopia</span></p>
                     </td>
                   </tr>
-                  <tr>
-                    <td width="50%">
-                      <p style="margin:0 0 3px;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#888;">Supporting Team</p>
-                      <p style="margin:0;font-size:14px;font-weight:600;color:#0a1547;">${team || '-'}</p>
-                    </td>
-                    <td width="50%">
-                      <p style="margin:0 0 3px;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#888;">Guests</p>
-                      <p style="margin:0;font-size:14px;font-weight:600;color:#0a1547;">${guests}</p>
-                    </td>
-                  </tr>
                 </table>
-                ${badgesHtml}
               </td></tr>
             </table>
           </td>
@@ -350,18 +335,6 @@ app.post('/api/rsvp', async (req, res) => {
                   <p style="margin:10px 0 0;"><a href="${qrImageUrl}" style="color:#D4AF37;font-size:12px;text-decoration:none;">View QR Code Online</a></p>
                 </td>
               </tr>
-            </table>
-          </td>
-        </tr>
-
-        <!-- FAN POINTS -->
-        <tr>
-          <td style="padding:0 40px 32px;">
-            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#fff9e6;border:1px solid #f0d060;border-radius:10px;">
-              <tr><td style="padding:18px 22px;">
-                <p style="margin:0;font-size:13px;color:#a07000;font-weight:600;">You've earned <strong style="font-size:18px;color:#c8860a;">${fanPoints} Fan Points</strong> for registering!</p>
-                <p style="margin:6px 0 0;font-size:12px;color:#997000;">Share your referral code to earn more bonus points.</p>
-              </td></tr>
             </table>
           </td>
         </tr>
@@ -425,9 +398,6 @@ Reservation ID: ${reservationId}
 Date: Sunday, July 19, 2026
 Time: 8:00 PM Onwards
 Venue: VIP Lounge, Commercial Bank of Ethiopia HQ, Addis Ababa, Ethiopia
-Supporting Team: ${team || '-'}
-Guests: ${guests}
-Fan Points: ${fanPoints}
 
 You can view your QR Code entry pass here:
 ${qrImageUrl}

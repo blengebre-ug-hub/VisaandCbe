@@ -26,36 +26,33 @@
       <div class="video-darkener"></div>
     </div>
 
+    <!-- TOP-RIGHT: Visa × FIFA Worldwide Partner -->
+    <div class="loading-corner loading-corner-visa">
+      <div class="loading-visa-block">
+        <img src="/assets/brand/visa-fifa-colored.png" alt="Visa FIFA" class="loading-visa-img">
+        <span class="loading-worldwide">Worldwide Partner</span>
+      </div>
+    </div>
+
+    <!-- CENTER: Title -->
     <div class="loading-content">
       <div class="loading-eyebrow">EXCLUSIVE INVITATION</div>
-
-      <h2 class="loading-subtitle">FIFA World Cup 2026 </h2>
-
-      <div class="loading-hosts">
-        <span class="host-intro">Presented by</span>
-        <div class="loading-partner-logos">
-          <div class="loading-partner-block">
-            <img src="/assets/brand/cbe-logo-transparent.png" alt="Commercial Bank of Ethiopia"
-              class="loading-logo loading-logo-cbe">
-            <div class="loading-partner-name">
-              <span class="partner-name-am">የኢትዮጵያ ንግድ ባንክ</span>
-              <span class="partner-name-en">Commercial Bank of Ethiopia</span>
-            </div>
-          </div>
-          <span class="host-divider">×</span>
-          <div class="loading-partner-block">
-            <img src="/assets/brand/visa-logo3-transparent.png" alt="Visa" class="loading-logo loading-logo-visa">
-            <div class="loading-partner-name">
-              <span class="partner-name-en visa-text">Visa International</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <h2 class="loading-subtitle">FIFA World Cup Final 2026™</h2>
       <div class="loading-bottom">
         <span class="loading-text">Loading...</span>
         <div class="progress-bar-container">
           <div class="progress-bar" id="progress-bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM-LEFT: CBE logo + Amharic + English -->
+    <div class="loading-corner loading-corner-cbe">
+      <div class="loading-cbe-block">
+        <img src="/assets/brand/cbe-logo-transparent.png" alt="Commercial Bank of Ethiopia" class="loading-cbe-img">
+        <div class="loading-cbe-text">
+          <span class="loading-cbe-am">የኢትዮጵያ ንግድ ባንክ</span>
+          <span class="loading-cbe-en">Commercial Bank of Ethiopia</span>
         </div>
       </div>
     </div>
@@ -66,12 +63,20 @@
 
     <!-- Fixed corner logos -->
     <div class="corner-brand corner-brand-visa">
-      <img src="/assets/brand/visa-logo-transparent.png" alt="Visa" class="corner-logo">
-      <span class="corner-brand-label">Official<br>Partner</span>
+      <div class="corner-visa-block">
+        <img src="/assets/brand/visa-fifa-colored.png" alt="Visa FIFA" class="corner-logo logo-desktop">
+        <img src="/assets/brand/visa-logo3.png" alt="Visa" class="corner-logo logo-mobile">
+        <span class="corner-worldwide logo-desktop">Worldwide Partner</span>
+      </div>
     </div>
     <div class="corner-brand corner-brand-cbe">
-      <img src="/assets/brand/cbe-logo-transparent.png" alt="Commercial Bank of Ethiopia" class="corner-logo">
-      <span class="corner-brand-label">Official<br>Host</span>
+      <div class="corner-cbe-block">
+        <img src="/assets/brand/cbe-logo-transparent.png" alt="Commercial Bank of Ethiopia" class="corner-logo">
+        <div class="corner-cbe-text">
+          <span class="corner-cbe-am">የኢትዮጵያ ንግድ ባንክ</span>
+          <span class="corner-cbe-en">Commercial Bank of Ethiopia</span>
+        </div>
+      </div>
     </div>
 
     <!-- ============ 2. LANDING PAGE ============ -->
@@ -159,94 +164,10 @@
       </div>
     </section>
 
-    <!-- ============ 3. CHOOSE YOUR TEAM ============ -->
-    <section id="team-screen" class="screen">
-      <div class="step-container">
-        <div class="step-progress">
-          <span class="step-dot active"></span>
-          <span class="step-line"></span>
-          <span class="step-dot"></span>
-          <span class="step-line"></span>
-          <span class="step-dot"></span>
-          <span class="step-line"></span>
-          <span class="step-dot"></span>
-        </div>
-        <button type="button" class="back-link" data-back="home-screen"><span class="arrow">←</span> Back</button>
-        <div class="step-header">
-          <h2 class="step-title">Choose Your Team</h2>
-          <p class="step-subtitle">Which side are you supporting in the Final?</p>
-        </div>
-        <div class="team-cards">
-          <button type="button" class="team-card" data-team="Brazil">
-            <div class="team-flag team-flag-emoji" aria-hidden="true">🇧🇷</div>
-            <h3>Brazil</h3>
-            <p>Finalist · Home Side</p>
-          </button>
-          <button type="button" class="team-card" data-team="Argentina">
-            <div class="team-flag team-flag-emoji" aria-hidden="true">🇦🇷</div>
-            <h3>Argentina</h3>
-            <p>Finalist · Away Side</p>
-          </button>
-        </div>
-        <p class="step-hint">Tap a team to continue · +50 Fan Points</p>
-      </div>
-    </section>
-
-    <!-- ============ 4. MATCH PREDICTION ============ -->
-    <section id="prediction-screen" class="screen">
-      <div class="step-container">
-        <div class="step-progress">
-          <span class="step-dot done"></span>
-          <span class="step-line done"></span>
-          <span class="step-dot active"></span>
-          <span class="step-line"></span>
-          <span class="step-dot"></span>
-          <span class="step-line"></span>
-          <span class="step-dot"></span>
-        </div>
-        <button type="button" class="back-link" data-back="team-screen"><span class="arrow">←</span> Back</button>
-        <div class="step-header">
-          <h2 class="step-title">Predict the Match</h2>
-          <p class="step-subtitle">What's your final score prediction?</p>
-        </div>
-        <div class="prediction-form">
-          <div class="score-predictor">
-            <div class="score-team">
-              <label for="score-home">Brazil</label>
-              <input type="number" id="score-home" min="0" max="20" value="1" inputmode="numeric">
-            </div>
-            <span class="score-dash">-</span>
-            <div class="score-team">
-              <label for="score-away">Argentina</label>
-              <input type="number" id="score-away" min="0" max="20" value="0" inputmode="numeric">
-            </div>
-          </div>
-          <div class="input-group">
-            <label for="goalScorer">First Goal Scorer <span class="optional">(optional)</span></label>
-            <input type="text" id="goalScorer" placeholder="Player name...">
-          </div>
-          <button type="button" id="btn-prediction-continue" class="gold-btn-glowing full-width">
-            <span class="btn-text">CONTINUE TO RSVP</span>
-            <span class="btn-glow"></span>
-          </button>
-          <p class="step-hint">+50 Fan Points for your prediction</p>
-        </div>
-      </div>
-    </section>
-
     <!-- ============ 5. RSVP FORM ============ -->
     <section id="form-screen" class="screen">
       <div class="form-container">
-        <div class="step-progress">
-          <span class="step-dot done"></span>
-          <span class="step-line done"></span>
-          <span class="step-dot done"></span>
-          <span class="step-line done"></span>
-          <span class="step-dot active"></span>
-          <span class="step-line"></span>
-          <span class="step-dot"></span>
-        </div>
-        <button type="button" class="back-link" data-back="prediction-screen"><span class="arrow">←</span> Back</button>
+        <button type="button" class="back-link" data-back="home-screen"><span class="arrow">←</span> Back</button>
         <div class="form-header">
           <h2 class="form-title">Reserve Your Seat</h2>
           <p class="form-subtitle">Almost there. Just a few details to secure your spot.</p>
@@ -269,16 +190,6 @@
               <input type="email" id="emailAddress" name="email" required placeholder="example@domain.com"
                 autocomplete="email">
               <span class="error-msg" id="err-emailAddress"></span>
-            </div>
-            <div class="input-group">
-              <label for="guestCount">Number of Guests <span class="required">*</span></label>
-              <select id="guestCount" name="guestCount">
-                <option value="1" selected>Just me (1)</option>
-                <option value="2">2 guests</option>
-                <option value="3">3 guests</option>
-                <option value="4">4 guests</option>
-                <option value="5">5+ guests</option>
-              </select>
             </div>
           </div>
 
@@ -318,11 +229,6 @@
     <!-- ============ 7. DIGITAL MATCH PASS ============ -->
     <section id="pass-screen" class="screen">
       <div class="success-container">
-        <div class="fan-points-banner">
-          <span class="fan-points-label">Fan Points</span>
-          <span class="fan-points-value" id="fan-points-display">200</span>
-        </div>
-
         <h2 class="success-title">Your Match Pass</h2>
         <p class="success-subtitle">You're officially in. Present this pass at the venue.</p>
         <div id="email-confirmation-notice" class="email-confirmation hidden" role="status"></div>
@@ -330,7 +236,7 @@
         <div class="success-card match-pass">
           <div class="ticket-header">
             <div class="ticket-brand-row">
-              <img src="/assets/brand/visa-logo-transparent.png" alt="Visa" class="ticket-mini-logo">
+              <img src="/assets/brand/visa-logo3-transparent.png" alt="Visa" class="ticket-mini-logo">
               <span class="ticket-x">×</span>
               <img src="/assets/brand/cbe-logo-transparent.png" alt="CBE" class="ticket-mini-logo ticket-mini-cbe">
             </div>
@@ -344,18 +250,6 @@
                 <span class="ticket-value" id="ticket-guest-name">-</span>
               </div>
               <div class="ticket-row">
-                <span class="ticket-label">Supporting Team</span>
-                <span class="ticket-value" id="ticket-team">-</span>
-              </div>
-              <div class="ticket-row">
-                <span class="ticket-label">Match Prediction</span>
-                <span class="ticket-value" id="ticket-prediction">-</span>
-              </div>
-              <div class="ticket-row">
-                <span class="ticket-label">Guests</span>
-                <span class="ticket-value" id="ticket-guests">1</span>
-              </div>
-              <div class="ticket-row">
                 <span class="ticket-label">Reservation ID</span>
                 <span class="ticket-value gold-text" id="ticket-res-id">-</span>
               </div>
@@ -367,7 +261,6 @@
                 <span class="ticket-label">Date &amp; Time</span>
                 <span class="ticket-value">July 19, 2026 · 8:00 PM</span>
               </div>
-              <div class="ticket-badges" id="ticket-badges"></div>
             </div>
             <div class="ticket-qr-section">
               <div class="qr-border-box">
@@ -388,68 +281,8 @@
             </button>
           </div>
         </div>
-
-        <!-- Invite Friends -->
-
-
-        <!-- Leaderboard -->
-        <div class="leaderboard-section">
-          <h3><svg class="heading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8"></path><path d="M12 17v4"></path><path d="M7 4h10v4a5 5 0 0 1-10 0V4z"></path><path d="M7 5H4.5A2.5 2.5 0 0 0 7 9.5"></path><path d="M17 5h2.5A2.5 2.5 0 0 1 17 9.5"></path></svg> Fan Leaderboard</h3>
-          <div id="leaderboard-list" class="leaderboard-list">
-            <p class="leaderboard-loading">Loading...</p>
-          </div>
-        </div>
       </div>
     </section>
-
-    <!-- ============ 8. THANK YOU PAGE (post-event) ============ -->
-    <section id="thankyou-screen" class="screen">
-      <div class="thankyou-container">
-        <h2 class="thankyou-title">Thank You for Being Part of It</h2>
-        <p class="thankyou-subtitle">Visa × CBE FIFA World Cup 2026™ Final Viewing Party</p>
-
-        <div class="thankyou-gallery">
-          <div class="gallery-item" style="background-image: url('assets/cbe_visa_bg2.jpg')"></div>
-          <div class="gallery-item" style="background-image: url('assets/cbe_visa_bg3.jpg')"></div>
-          <div class="gallery-item" style="background-image: url('assets/cbe_visa_bg1.jpg')"></div>
-        </div>
-
-        <div class="winners-section">
-          <h3><svg class="heading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><circle cx="12" cy="12" r="4.5"></circle><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"></circle></svg> Prediction Winners</h3>
-          <div id="prediction-winners" class="winners-list">
-            <p class="muted">Winners will be announced after the match.</p>
-          </div>
-        </div>
-
-        <div class="leaderboard-section">
-          <h3><svg class="heading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8"></path><path d="M12 17v4"></path><path d="M7 4h10v4a5 5 0 0 1-10 0V4z"></path><path d="M7 5H4.5A2.5 2.5 0 0 0 7 9.5"></path><path d="M17 5h2.5A2.5 2.5 0 0 1 17 9.5"></path></svg> Final Leaderboard</h3>
-          <div id="final-leaderboard" class="leaderboard-list"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ HALFTIME PREDICTION MODAL ============ -->
-    <div id="halftime-modal" class="modal-overlay hidden">
-      <div class="modal-card">
-        <button type="button" class="modal-close" id="btn-close-halftime" aria-label="Close">×</button>
-        <h3><svg class="heading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><line x1="12" y1="13" x2="12" y2="9"></line><line x1="9" y1="2" x2="15" y2="2"></line></svg> Halftime Prediction</h3>
-        <p>Predict the final score now for bonus Fan Points!</p>
-        <div class="score-predictor halftime-scores">
-          <div class="score-team">
-            <label for="ht-score-home">Brazil</label>
-            <input type="number" id="ht-score-home" min="0" max="20" value="1" inputmode="numeric">
-          </div>
-          <span class="score-dash">-</span>
-          <div class="score-team">
-            <label for="ht-score-away">Argentina</label>
-            <input type="number" id="ht-score-away" min="0" max="20" value="0" inputmode="numeric">
-          </div>
-        </div>
-        <button type="button" id="btn-submit-halftime" class="gold-btn-glowing full-width">
-          <span class="btn-text">SUBMIT PREDICTION</span>
-        </button>
-      </div>
-    </div>
 
   </div>
 

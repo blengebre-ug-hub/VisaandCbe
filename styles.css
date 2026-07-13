@@ -155,10 +155,10 @@ body {
 
 .loading-eyebrow {
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 12px;
   letter-spacing: 5px;
   color: var(--color-gold-med);
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   font-weight: 600;
   opacity: 0;
   animation: fadeInUp 1s forwards 0.5s;
@@ -177,10 +177,10 @@ body {
 
 .loading-subtitle {
   font-family: var(--font-serif);
-  font-size: clamp(20px, 3.5vw, 28px);
+  font-size: clamp(17px, 3vw, 22px);
   letter-spacing: 2px;
   color: var(--color-gold-med);
-  margin-bottom: 40px;
+  margin-bottom: 16px;
   font-weight: 400;
   text-shadow: 0 0 15px var(--color-gold-glow);
   opacity: 0;
@@ -229,7 +229,7 @@ body {
 
 .loading-bottom {
   position: absolute;
-  bottom: -100px;
+  bottom: -60px;
   width: 100%;
   max-width: 320px;
   display: flex;
@@ -1078,23 +1078,7 @@ body {
     letter-spacing: 1px;
   }
 
-  .loading-hosts {
-    margin-bottom: 36px;
-  }
 
-  .loading-partner-logos {
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-  }
-
-  .loading-logo-cbe {
-    height: 64px;
-  }
-
-  .loading-logo-visa {
-    height: 36px;
-  }
 
   /* Hero Screen */
   .screen {
@@ -1380,21 +1364,113 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
-@media (max-width: 768px) {
-  .partner-logo-cbe {
-    height: 60px;
-  }
 
-  .partner-logo-visa {
-    height: 30px;
-  }
+/* ==========================================================================
+   LOADING SCREEN — CORNER-POSITIONED PARTNER LOGOS
+   ========================================================================== */
 
-  .loading-logo-cbe {
-    height: 50px;
-  }
+/* Generic corner anchor on the loading screen */
+.loading-corner {
+  position: absolute;
+  z-index: 10;
+  pointer-events: none;
+}
 
-  .loading-logo-visa {
-    height: 28px;
+/* TOP-RIGHT: Visa × FIFA */
+.loading-corner-visa {
+  top: 24px;
+  right: 24px;
+}
+
+.loading-visa-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.loading-visa-img {
+  height: 68px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+}
+
+.loading-worldwide {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: 1.5px;
+  text-align: right;
+}
+
+/* BOTTOM-LEFT: CBE */
+.loading-corner-cbe {
+  bottom: 80px;   /* above progress bar */
+  left: 24px;
+}
+
+.loading-cbe-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.loading-cbe-img {
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+}
+
+.loading-cbe-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.loading-cbe-am {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #D4AF37;
+  line-height: 1.3;
+  letter-spacing: 0.3px;
+}
+
+.loading-cbe-en {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: #D4AF37;
+  opacity: 0.85;
+  line-height: 1.3;
+  letter-spacing: 0.2px;
+}
+
+@media (max-width: 600px) {
+  .loading-corner-visa {
+    top: 14px;
+    right: 14px;
+  }
+  .loading-visa-img {
+    height: 42px;
+  }
+  .loading-worldwide {
+    font-size: 9px;
+    letter-spacing: 1px;
+  }
+  .loading-corner-cbe {
+    bottom: 70px;
+    left: 14px;
+  }
+  .loading-cbe-img {
+    height: 34px;
+  }
+  .loading-cbe-am {
+    font-size: 10px;
+  }
+  .loading-cbe-en {
+    font-size: 8px;
   }
 }
 
@@ -1469,86 +1545,132 @@ body {
 }
 
 /* ==========================================================================
-   FIXED CORNER LOGOS
+   FIXED CORNER LOGOS — MAIN APP PAGES
    ========================================================================== */
 .corner-brand {
   position: fixed;
   z-index: 1000;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 20px;
-  border-radius: 12px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
   pointer-events: none;
   transition: opacity 0.3s ease;
 }
 
 .corner-brand-visa {
-  top: 20px;
+  top: 24px;
   right: 24px;
 }
 
 .corner-brand-cbe {
-  top: 20px;
+  bottom: 24px;
   left: 24px;
 }
 
-.corner-brand-label {
-  font-family: var(--font-sans);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-  white-space: nowrap;
-  border-left: 1px solid var(--glass-border);
-  padding-left: 10px;
-  line-height: 1.3;
+/* ── Visa block (logo + Worldwide Partner text) ── */
+.corner-visa-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
 }
 
-.corner-logo {
+.corner-visa-block .logo-desktop {
   display: block;
+  height: 64px;
   object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
 }
 
-.corner-brand-visa .corner-logo {
-  height: 30px;
+.corner-visa-block .logo-mobile {
+  display: none;
 }
 
-.corner-brand-cbe .corner-logo {
-  height: 54px;
+.corner-worldwide {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.8);
+  letter-spacing: 1.5px;
+  text-align: right;
+  pointer-events: none;
+}
+
+/* ── CBE block (emblem + Amharic + English) ── */
+.corner-cbe-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.corner-cbe-block .corner-logo {
+  height: 52px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+}
+
+.corner-cbe-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.corner-cbe-am {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #D4AF37;
+  line-height: 1.3;
+  letter-spacing: 0.3px;
+}
+
+.corner-cbe-en {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: #D4AF37;
+  opacity: 0.85;
+  line-height: 1.3;
+  letter-spacing: 0.2px;
 }
 
 @media (max-width: 600px) {
-  .corner-brand {
-    padding: 8px 12px;
-    gap: 0;
+  .corner-brand-visa {
+    position: fixed;
+    top: 14px;
+    right: 14px;
   }
 
-  .corner-brand-label {
+  /* Keep visa-fifa-colored.png on mobile — just resize it */
+  .corner-visa-block .logo-desktop {
+    display: block;
+    height: 40px;
+  }
+
+  .corner-visa-block .logo-mobile {
     display: none;
   }
 
-  .corner-brand-visa {
-    top: 12px;
-    right: 12px;
-  }
-
-  .corner-brand-visa .corner-logo {
-    height: 24px;
+  .corner-worldwide {
+    font-size: 9px;
+    letter-spacing: 1px;
   }
 
   .corner-brand-cbe {
-    top: 12px;
-    left: 12px;
+    position: fixed;
+    bottom: 14px;
+    left: 14px;
   }
 
-  .corner-brand-cbe .corner-logo {
+  .corner-cbe-block .corner-logo {
     height: 34px;
+  }
+
+  .corner-cbe-am {
+    font-size: 10px;
+  }
+
+  .corner-cbe-en {
+    font-size: 8px;
   }
 }
 
