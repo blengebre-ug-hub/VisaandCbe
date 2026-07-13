@@ -17,7 +17,6 @@
 
 <body>
 
-  <!-- ============ 1. LOADING SCREEN ============ -->
   <div id="loading-screen" class="loading-overlay">
     <div class="video-background-container">
       <video id="loading-video" autoplay loop muted playsinline>
@@ -26,7 +25,6 @@
       <div class="video-darkener"></div>
     </div>
 
-    <!-- TOP-RIGHT: Visa × FIFA Worldwide Partner -->
     <div class="loading-corner loading-corner-visa">
       <div class="loading-visa-block">
         <img src="/assets/brand/visa-fifa-colored.png" alt="Visa FIFA" class="loading-visa-img">
@@ -34,7 +32,6 @@
       </div>
     </div>
 
-    <!-- CENTER: Title -->
     <div class="loading-content">
       <div class="loading-eyebrow">EXCLUSIVE INVITATION</div>
       <h2 class="loading-subtitle">FIFA World Cup Final 2026™</h2>
@@ -46,7 +43,6 @@
       </div>
     </div>
 
-    <!-- BOTTOM-LEFT: CBE logo + Amharic + English (vertical brand layout) -->
     <div class="loading-corner loading-corner-cbe">
       <div class="loading-cbe-block">
         <img src="/assets/brand/cbe-logo-transparent.png" alt="Commercial Bank of Ethiopia" class="loading-cbe-img">
@@ -56,33 +52,28 @@
     </div>
   </div>
 
-  <!-- ============ MAIN APP ============ -->
   <div id="app-container" class="app-container hidden">
 
-    <!-- Fixed corner logos -->
-    <div class="corner-brand corner-brand-visa">
-      <div class="corner-visa-block">
-        <img src="/assets/brand/visa-fifa-colored.png" alt="Visa FIFA" class="corner-logo logo-desktop">
-        <img src="/assets/brand/visa-logo3.png" alt="Visa" class="corner-logo logo-mobile">
-        <span class="corner-worldwide logo-desktop">Worldwide Partner</span>
-      </div>
-    </div>
-    <div class="corner-brand corner-brand-cbe">
-      <div class="corner-cbe-block">
-        <img src="/assets/brand/cbe-logo-transparent.png" alt="Commercial Bank of Ethiopia" class="corner-logo">
-        <span class="corner-cbe-am">የኢትዮጵያ ንግድ ባንክ</span>
-        <span class="corner-cbe-en">Commercial Bank of Ethiopia</span>
-      </div>
-    </div>
+    <div class="brand-dual-stripe" aria-hidden="true"></div>
 
-    <!-- ============ 2. LANDING PAGE ============ -->
     <section id="home-screen" class="screen active">
+      <div class="corner-brand corner-brand-visa">
+        <div class="corner-visa-block">
+          <img src="/assets/brand/visa-fifa-colored.png" alt="Visa FIFA" class="corner-logo logo-desktop">
+          <span class="corner-worldwide logo-desktop">Worldwide Partner</span>
+        </div>
+      </div>
+      <div class="corner-brand corner-brand-cbe">
+        <div class="corner-cbe-block">
+          <img src="/assets/brand/cbe-logo-transparent.png" alt="Commercial Bank of Ethiopia" class="corner-logo">
+          <span class="corner-cbe-am">የኢትዮጵያ ንግድ ባንክ</span>
+          <span class="corner-cbe-en">Commercial Bank of Ethiopia</span>
+        </div>
+      </div>
+
       <div class="hero-container">
-
-
         <div class="glow-cbe" aria-hidden="true"></div>
         <div class="glow-visa" aria-hidden="true"></div>
-        <div class="brand-dual-stripe" aria-hidden="true"></div>
 
         <header class="hero-header">
           <div class="brand-badge">VISA × CBE EXCLUSIVE EVENT</div>
@@ -90,7 +81,6 @@
 
         <main class="hero-main">
           <h1 class="hero-title">
-
             <span class="title-fifa">FIFA WORLD CUP 2026™</span>
             <span class="title-event">FINAL VIEWING PARTY</span>
           </h1>
@@ -98,9 +88,6 @@
             hosted by <strong class="text-cbe">Commercial Bank of Ethiopia</strong> &amp; <strong
               class="text-visa">Visa</strong>.</p>
 
-
-
-          <!-- Countdown -->
           <div class="countdown-section">
             <p class="countdown-label">Event starts in</p>
             <div class="countdown-timer" id="countdown-timer">
@@ -163,8 +150,21 @@
       </div>
     </section>
 
-    <!-- ============ 5. RSVP FORM ============ -->
     <section id="form-screen" class="screen">
+      <div class="corner-brand corner-brand-visa">
+        <div class="corner-visa-block">
+          <img src="/assets/brand/visa-fifa-colored.png" alt="Visa FIFA" class="corner-logo logo-desktop">
+          <span class="corner-worldwide logo-desktop">Worldwide Partner</span>
+        </div>
+      </div>
+      <div class="corner-brand corner-brand-cbe">
+        <div class="corner-cbe-block">
+          <img src="/assets/brand/cbe-logo-transparent.png" alt="Commercial Bank of Ethiopia" class="corner-logo">
+          <span class="corner-cbe-am">የኢትዮጵያ ንግድ ባንክ</span>
+          <span class="corner-cbe-en">Commercial Bank of Ethiopia</span>
+        </div>
+      </div>
+
       <div class="form-container">
         <button type="button" class="back-link" data-back="home-screen"><span class="arrow">←</span> Back</button>
         <div class="form-header">
@@ -185,6 +185,11 @@
               <span class="error-msg" id="err-phoneNumber"></span>
             </div>
             <div class="input-group">
+              <label for="organization">Organization</label>
+              <input type="text" id="organization" name="organization" placeholder="e.g. CBE or Visa">
+              <span class="error-msg" id="err-organization"></span>
+            </div>
+            <div class="input-group">
               <label for="emailAddress">Email <span class="required">*</span></label>
               <input type="email" id="emailAddress" name="email" required placeholder="example@domain.com"
                 autocomplete="email">
@@ -202,7 +207,6 @@
       </div>
     </section>
 
-    <!-- ============ 6. RESERVATION ANIMATION ============ -->
     <div id="reservation-overlay" class="reservation-overlay hidden">
       <div class="reservation-animation">
         <div class="reservation-step active" data-step="1">
@@ -226,8 +230,21 @@
       </div>
     </div>
 
-    <!-- ============ 7. DIGITAL MATCH PASS ============ -->
     <section id="pass-screen" class="screen">
+      <div class="corner-brand corner-brand-visa">
+        <div class="corner-visa-block">
+          <img src="/assets/brand/visa-fifa-colored.png" alt="Visa FIFA" class="corner-logo logo-desktop">
+          <span class="corner-worldwide logo-desktop">Worldwide Partner</span>
+        </div>
+      </div>
+      <div class="corner-brand corner-brand-cbe">
+        <div class="corner-cbe-block">
+          <img src="/assets/brand/cbe-logo-transparent.png" alt="Commercial Bank of Ethiopia" class="corner-logo">
+          <span class="corner-cbe-am">የኢትዮጵያ ንግድ ባንክ</span>
+          <span class="corner-cbe-en">Commercial Bank of Ethiopia</span>
+        </div>
+      </div>
+
       <div class="success-container">
         <h2 class="success-title">Your Match Pass</h2>
         <p class="success-subtitle">You're officially in. Present this pass at the venue.</p>
@@ -255,11 +272,11 @@
               </div>
               <div class="ticket-row">
                 <span class="ticket-label">Venue</span>
-                <span class="ticket-value">VIP Lounge, CBE HQ, Addis Ababa</span>
+                <span class="ticket-value">Science Museum </span>
               </div>
               <div class="ticket-row">
                 <span class="ticket-label">Date &amp; Time</span>
-                <span class="ticket-value">July 19, 2026 · 8:00 PM</span>
+                <span class="ticket-value">July 19, 2026 · 6:00 PM</span>
               </div>
             </div>
             <div class="ticket-qr-section">

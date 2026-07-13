@@ -115,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
       name: document.getElementById('fullName').value.trim(),
       email: document.getElementById('emailAddress').value.trim(),
       phone: document.getElementById('phoneNumber').value.trim(),
+      organization: document.getElementById('organization').value.trim(),
       guestCount: 1,
       referredBy: new URLSearchParams(window.location.search).get('ref') || ''
     };

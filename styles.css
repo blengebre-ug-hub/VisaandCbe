@@ -1545,23 +1545,28 @@ body {
 /* ==========================================================================
    FIXED CORNER LOGOS — MAIN APP PAGES
    ========================================================================== */
+/* ==========================================================================
+   FIXED CORNER LOGOS — MAIN APP PAGES (FIXED POSITION OVERLAY)
+   ========================================================================== */
 .corner-brand {
-  position: fixed;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  pointer-events: none;
+  position: fixed !important; /* Force it out of section limitations */
+  z-index: 9999;             /* Bring it above all content structures */
+  pointer-events: auto;      /* Make it interactive if needed, or none if preferred */
   transition: opacity 0.3s ease;
 }
 
 .corner-brand-visa {
   top: 24px;
   right: 24px;
+  bottom: auto;
+  left: auto;
 }
 
 .corner-brand-cbe {
-  bottom: 24px;
+  bottom: 8px !important;    /* Forces it down perfectly */
   left: 24px;
+  top: auto;
+  right: auto;
 }
 
 /* ── Visa block (logo + Worldwide Partner text) ── */
@@ -1628,21 +1633,18 @@ body {
   text-align: center;
 }
 
+/* ==========================================================================
+   MOBILE RESPONSIVENESS (max 600px)
+   ========================================================================== */
 @media (max-width: 600px) {
   .corner-brand-visa {
-    position: fixed;
     top: 14px;
     right: 14px;
   }
 
-  /* Keep visa-fifa-colored.png on mobile — just resize it */
   .corner-visa-block .logo-desktop {
     display: block;
     height: 40px;
-  }
-
-  .corner-visa-block .logo-mobile {
-    display: none;
   }
 
   .corner-worldwide {
@@ -1651,8 +1653,7 @@ body {
   }
 
   .corner-brand-cbe {
-    position: fixed;
-    bottom: 14px;
+    bottom: 4px !important; /* Pushes CBE extra close to the bottom on mobile */
     left: 14px;
   }
 
@@ -1668,7 +1669,6 @@ body {
     font-size: 8px;
   }
 }
-
 /* ==========================================================================
    VISA × CBE PARTNERSHIP SCENE
    ========================================================================== */
