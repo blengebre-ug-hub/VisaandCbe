@@ -16,7 +16,7 @@ const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 const poolConfig = process.env.DATABASE_URL
   ? {
       connectionString: process.env.DATABASE_URL,
-      ssl: { rejectUnauthorized: false }, // required for Render PostgreSQL
+      ssl: { rejectUnauthorized: false }, // required for production hosted databases like Neon
     }
   : {
       host:     process.env.DB_HOST     || 'localhost',
@@ -125,12 +125,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname)));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
-const EMAILS_DIR = process.env.VERCEL ? path.join('/tmp', 'sent_emails') : path.join(__dirname, 'data', 'sent_emails');
-app.use('/qrcodes', express.static(EMAILS_DIR));
-if (!fs.existsSync(EMAILS_DIR)) {
-  fs.mkdirSync(EMAILS_DIR, { recursive: true });
-}
-
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function getFormattedTime() {
   const date = new Date();
@@ -178,15 +172,13 @@ app.post('/api/rsvp', async (req, res) => {
     const nextCounter = seqResult.rows[0].next_id;
     const reservationId = `VIP-2026-${String(nextCounter).padStart(6, '0')}`;
 
-    // ── 3. Generate QR Code ─────────────────────────────────────────────────
+    // ── 3. Generate QR Code directly into memory buffer ───────────────────
     const qrDataUrl = await QRCode.toDataURL(reservationId, {
       color: { dark: '#3A125E', light: '#FFFFFF' },
       width: 300,
       margin: 2
     });
-
     const qrBuffer = Buffer.from(qrDataUrl.split(',')[1], 'base64');
-    fs.writeFileSync(path.join(EMAILS_DIR, `qrcode-${reservationId}.png`), qrBuffer);
 
     const referralCode = generateReferralCode();
     const fanPoints = calculateFanPoints({ referredBy });
@@ -367,11 +359,7 @@ app.post('/api/rsvp', async (req, res) => {
 </html>
     `;
 
-    // ── 6. Save local email backup ──────────────────────────────────────────
-    const localBackup = emailBodyHTML.replace('src="cid:qrcode"', `src="${qrDataUrl}"`);
-    fs.writeFileSync(path.join(EMAILS_DIR, `email-${reservationId}.html`), localBackup);
-
-    // ── 7. Send email if SMTP is configured ─────────────────────────────────
+    // ── 6. Send email if SMTP is configured ─────────────────────────────────
     let emailSent = false;
     if (cleanEmail && process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
       try {
@@ -400,6 +388,26 @@ Thank you,
 Commercial Bank of Ethiopia & Visa International
         `.trim();
 
+        // Safe setup of attachments (Avoid local disk crash if files are missing)
+        const attachments = [
+          { 
+            filename: `VIP-Pass-QRCode-${reservationId}.png`, 
+            content: qrBuffer, 
+            cid: 'qrcode' 
+          }
+        ];
+
+        const visaLogoPath = path.join(__dirname, 'assets', 'brand', 'visa-fifa-colored.png');
+        const cbeLogoPath = path.join(__dirname, 'assets', 'brand', 'cbe-logo-transparent.png');
+
+        // Gracefully append brand logo assets if they physically exist
+        if (fs.existsSync(visaLogoPath)) {
+          attachments.push({ filename: 'visa-fifa-colored.png', path: visaLogoPath, cid: 'visalogo' });
+        }
+        if (fs.existsSync(cbeLogoPath)) {
+          attachments.push({ filename: 'cbe-logo-transparent.png', path: cbeLogoPath, cid: 'cbelogo' });
+        }
+
         await transporter.sendMail({
           from:        `"CBE & Visa VIP Events" <${process.env.SMTP_USER}>`,
           to:          cleanEmail,
@@ -407,23 +415,7 @@ Commercial Bank of Ethiopia & Visa International
           subject:     `Your FIFA World Cup 2026 VIP Pass: ${reservationId}`,
           text:        plainTextBody,
           html:        emailBodyHTML,
-          attachments: [
-            { 
-              filename: `VIP-Pass-QRCode-${reservationId}.png`, 
-              content: qrBuffer, 
-              cid: 'qrcode' 
-            },
-            { 
-              filename: 'visa-fifa-colored.png', 
-              path: path.join(__dirname, 'assets', 'brand', 'visa-fifa-colored.png'), 
-              cid: 'visalogo' 
-            },
-            { 
-              filename: 'cbe-logo-transparent.png', 
-              path: path.join(__dirname, 'assets', 'brand', 'cbe-logo-transparent.png'), 
-              cid: 'cbelogo' 
-            }
-          ]
+          attachments: attachments
         });
         emailSent = true;
         console.log(`📧 Confirmation email sent to: ${cleanEmail}`);
@@ -490,9 +482,24 @@ app.post('/api/rsvp/:id/halftime', async (req, res) => {
   }
 });
 
-// ─── API: Event Check-In (CRITICAL FIX FOR THE DB LOOKUP ERROR) ─────────────────
+
+// ─── API: Lookup Reservation details (For Staff Portal) ──────────────────────
+app.get('/api/rsvp/:id', async (req, res) => {
+  const id = req.params.id.trim().toUpperCase();
+  try {
+    const result = await pool.query('SELECT * FROM rsvps WHERE UPPER(id) = $1', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: `Reservation ID "${id}" could not be found.` });
+    }
+    return res.status(200).json({ success: true, rsvp: result.rows[0] });
+  } catch (err) {
+    console.error('❌ Lookup error:', err.message);
+    return res.status(500).json({ error: 'Database query error.' });
+  }
+});
+
+// ─── API: Event Check-In ──────────────────────────────────────────────────────
 app.post('/api/checkin', async (req, res) => {
-   
   let { id } = req.body;
 
   if (!id) {
@@ -502,13 +509,6 @@ app.post('/api/checkin', async (req, res) => {
   let cleanId = id.replace(/['"]+/g, '').trim().toUpperCase();
 
   try {
-    // 🔍 DEBUG LOG: Let's see what the database actually holds right now
-    const currentRows = await pool.query('SELECT id FROM rsvps LIMIT 5');
-    console.log('--- DB CHECK-IN DEBUG ---');
-    console.log('Target ID trying to look up:', cleanId);
-    console.log('Existing IDs currently in this DB table:', currentRows.rows.map(r => r.id));
-    console.log('-------------------------');
-
     const result = await pool.query('SELECT * FROM rsvps WHERE UPPER(id) = $1', [cleanId]);
 
     if (result.rows.length === 0) {
@@ -533,18 +533,28 @@ app.post('/api/checkin', async (req, res) => {
     return res.status(500).json({ error: 'Database error processing check-in.' });
   }
 });
-// ─── API: Serve QR Code Image ────────────────────────────────────────
-app.get('/qrcodes/:id.png', (req, res) => {
-  const id = req.params.id;
-  const filePath = path.join(EMAILS_DIR, `qrcode-${id}`);
+
+// ─── API: Serve QR Code Image (On-the-Fly Secure Generation) ─────────────────
+app.get('/qrcodes/:id.png', async (req, res) => {
+  const id = req.params.id.replace('.png', '').trim().toUpperCase();
   
-  // Safe lookup: check with or without custom file structure suffix
-  if (fs.existsSync(`${filePath}.png`)) {
-    res.sendFile(`${filePath}.png`);
-  } else if (fs.existsSync(filePath)) {
-    res.sendFile(filePath);
-  } else {
-    res.status(404).json({ error: 'QR code not found.' });
+  try {
+    // 1. Verify ID exists in DB to prevent random QR code scrapers
+    const result = await pool.query('SELECT id FROM rsvps WHERE UPPER(id) = $1', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'QR Code not found.' });
+    }
+
+    // 2. Generate QR directly into dynamic memory stream & send back to browser
+    res.setHeader('Content-Type', 'image/png');
+    QRCode.toFileStream(res, id, {
+      color: { dark: '#3A125E', light: '#FFFFFF' },
+      width: 300,
+      margin: 2
+    });
+  } catch (err) {
+    console.error('❌ Dynamic QR delivery failed:', err.message);
+    res.status(500).json({ error: 'Failed to generate asset.' });
   }
 });
 

@@ -100,10 +100,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const rsvp = await response.json();
-      currentGuest = rsvp;
+      const data = await response.json();
+      
+      // FIX: Extract "rsvp" from the API return object { success: true, rsvp: {...} }
+      currentGuest = data.rsvp;
 
-      renderGuestDetails(rsvp);
+      renderGuestDetails(currentGuest);
 
     } catch (err) {
       console.error('Lookup error:', err);
@@ -113,22 +115,29 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderGuestDetails(rsvp) {
-    if (rsvp.checkInStatus === 'Checked In') {
+    // FIX: Map database snake_case fields correctly
+    const isAlreadyCheckedIn = rsvp.check_in_status === 'Checked In' || rsvp.checkInStatus === 'Checked In';
+
+    if (isAlreadyCheckedIn) {
       // Guest is already checked in
       valDupName.textContent = rsvp.name;
-      valDupOrg.textContent = rsvp.organization;
+      valDupOrg.textContent = rsvp.organization || '';
       valDupId.textContent = rsvp.id;
-      valDupTime.textContent = rsvp.checkInTime || 'N/A';
+      valDupTime.textContent = rsvp.check_in_time || rsvp.checkInTime || 'N/A';
       
       showState(stateFoundAlready);
     } else {
       // Clean check-in possible
       valCleanName.textContent = rsvp.name;
-      valCleanOrg.textContent = rsvp.organization;
+      valCleanOrg.textContent = rsvp.organization || '';
       valCleanId.textContent = rsvp.id;
-      valCleanMeal.textContent = rsvp.mealPreference || 'Standard Gourmet Menu';
-      valCleanReqs.textContent = rsvp.specialRequests || 'None';
+      valCleanMeal.textContent = rsvp.meal_preference || rsvp.mealPreference || 'Standard Gourmet Menu';
+      valCleanReqs.textContent = rsvp.special_requests || rsvp.specialRequests || 'None';
       
+      // Make sure action button is active
+      btnPerformCheckin.disabled = false;
+      btnPerformCheckin.textContent = 'Check In Guest';
+
       showState(stateFoundClean);
     }
   }
@@ -141,20 +150,21 @@ document.addEventListener('DOMContentLoaded', () => {
     btnPerformCheckin.textContent = 'Processing Check-in...';
 
     try {
-      const response = await fetch(`/api/rsvp/${currentGuest.id}/checkin`, {
+      // FIX: Changed fetch path and method payload to match POST /api/checkin
+      const response = await fetch(`/api/checkin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({ id: currentGuest.id })
       });
 
       const result = await response.json();
 
       if (response.ok) {
-        // Success check-in! Refetch or update UI manually
-        // We will directly transition to the "Already Checked In" view showing the new timestamp
-        currentGuest.checkInStatus = 'Checked In';
-        currentGuest.checkInTime = result.rsvp.checkInTime;
+        // Update local object status and timestamp
+        currentGuest.check_in_status = 'Checked In';
+        currentGuest.check_in_time = result.rsvp.check_in_time || result.rsvp.checkInTime;
         
         renderGuestDetails(currentGuest);
       } else {
@@ -199,7 +209,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const config = { 
         fps: 10, 
         qrbox: (width, height) => {
-          // Make box size responsive: 70% of the minimum dimension
           const minDim = Math.min(width, height);
           const boxSize = Math.floor(minDim * 0.7);
           return { width: boxSize, height: boxSize };
@@ -207,18 +216,14 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       qrScanner.start(
-        { facingMode: "environment" }, // Prefer back camera
+        { facingMode: "environment" }, 
         config,
         (decodedText) => {
-          // Success Callback: scanned QR text found
           console.log(`Scan result: ${decodedText}`);
-          
-          // Play a small beep sound if desired, and run lookup
           lookupReservation(decodedText);
         },
         (errorMessage) => {
-          // Verbose log: camera scanning frames
-          // Normally we don't spam console here, it's called on every empty frame
+          // Verbose logging callback
         }
       ).then(() => {
         isScannerRunning = true;
@@ -228,7 +233,6 @@ document.addEventListener('DOMContentLoaded', () => {
         btnToggleCamera.style.color = "var(--color-red)";
       }).catch(err => {
         console.error("Camera start failed:", err);
-        // Fallback to Html5QrcodeScanner full widget if start fails
         initializeFullWidget();
       });
 
@@ -251,7 +255,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Standalone start/stop camera toggle
   btnToggleCamera.addEventListener('click', () => {
     if (isScannerRunning) {
       stopScanner();
@@ -260,22 +263,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Fallback Full Widget rendering inside portal
   function initializeFullWidget() {
     const fallbackScanner = new Html5QrcodeScanner(
       "qr-reader", 
       { fps: 10, qrbox: 250, rememberLastUsedCamera: true },
-      /* verbose= */ false
+      false
     );
     
     fallbackScanner.render((decodedText) => {
       lookupReservation(decodedText);
     }, (error) => {
-      // frame error callback
+      // frame error
     });
   }
 
   // Auto start scanner camera on load
-  // (Browser might prompt for permissions)
   startScanner();
 });
