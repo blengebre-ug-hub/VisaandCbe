@@ -492,7 +492,20 @@ app.post('/api/rsvp/:id/halftime', async (req, res) => {
     return res.status(500).json({ error: 'Database error.' });
   }
 });
-
+// ─── API: Get All RSVPs (For Staff Portal Directory) ─────────────────────────
+app.get('/api/rsvps', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, name, organization, check_in_status, check_in_time 
+       FROM rsvps 
+       ORDER BY name ASC`
+    );
+    return res.status(200).json({ success: true, rsvps: result.rows });
+  } catch (err) {
+    console.error('❌ Error fetching all RSVPs:', err.message);
+    return res.status(500).json({ error: 'Database query error.' });
+  }
+});
 
 // ─── API: Lookup Reservation details (For Staff Portal) ──────────────────────
 app.get('/api/rsvp/:id', async (req, res) => {

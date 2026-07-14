@@ -26,12 +26,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const valDupId = document.getElementById('val-dup-id');
   const valDupTime = document.getElementById('val-dup-time');
 
+  // New Directory UI Elements
+  const directorySearch = document.getElementById('directory-search');
+  const directoryFilter = document.getElementById('directory-filter');
+  const directoryList = document.getElementById('guest-directory-list');
+  const statTotal = document.getElementById('stat-total');
+  const statChecked = document.getElementById('stat-checked');
+
   const btnResetViews = document.querySelectorAll('.btn-reset-view, .btn-reset-view-secondary');
 
   // State Variables
   let currentGuest = null;
   let qrScanner = null;
   let isScannerRunning = false;
+  let guestDatabaseList = []; // Local mirror of DB reservations for list search/filter
 
   // ==========================================
   // 1. STATE SWITCHING LOGIC
@@ -59,15 +67,84 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ==========================================
-  // 2. BACKEND API CALLS
+  // 2. BACKEND DATABASE FETCHES
   // ==========================================
+  
+  // Fetch full list from API to populate directory
+  async function fetchGuestDirectory() {
+    try {
+      const response = await fetch('/api/rsvps'); // Expects an endpoint returning all RSVPs
+      if (!response.ok) throw new Error('Failed to fetch RSVPs');
+      const data = await response.json();
+      
+      // Handle either response structure: [guest1, guest2] or { success: true, rsvps: [...] }
+      guestDatabaseList = Array.isArray(data) ? data : (data.rsvps || []);
+      renderDirectory();
+    } catch (err) {
+      console.warn('Could not fetch guest directory list from database:', err);
+    }
+  }
+
+  // Render list matching current search + filter
+  function renderDirectory() {
+    const searchVal = directorySearch.value.toLowerCase().trim();
+    const filterVal = directoryFilter.value; // 'all', 'pending', 'checked-in'
+
+    directoryList.innerHTML = '';
+    let totalCount = guestDatabaseList.length;
+    let checkedCount = 0;
+
+    guestDatabaseList.forEach(guest => {
+      const isChecked = guest.check_in_status === 'Checked In' || guest.checkInStatus === 'Checked In';
+      if (isChecked) checkedCount++;
+
+      // Search matching logic
+      const matchesSearch = guest.name.toLowerCase().includes(searchVal) ||
+                            guest.id.toLowerCase().includes(searchVal) ||
+                            (guest.organization && guest.organization.toLowerCase().includes(searchVal));
+
+      // Filter matching logic
+      const matchesFilter = (filterVal === 'all') ||
+                            (filterVal === 'pending' && !isChecked) ||
+                            (filterVal === 'checked-in' && isChecked);
+
+      if (matchesSearch && matchesFilter) {
+        const li = document.createElement('li');
+        li.className = 'guest-item';
+        li.setAttribute('data-id', guest.id);
+
+        const badgeClass = isChecked ? 'status-checked' : 'status-pending';
+        const badgeText = isChecked ? 'Checked In' : 'Pending';
+
+        li.innerHTML = `
+          <div class="guest-item-info">
+            <span class="guest-item-name">${guest.name}</span>
+            <span class="guest-item-meta">${guest.organization || 'VIP'} · ${guest.id}</span>
+          </div>
+          <span class="list-badge ${badgeClass}">${badgeText}</span>
+        `;
+
+        // Click list item to trigger look up
+        li.addEventListener('click', () => {
+          lookupReservation(guest.id);
+        });
+
+        directoryList.appendChild(li);
+      }
+    });
+
+    // Update the UI metrics counter
+    statTotal.textContent = totalCount;
+    statChecked.textContent = checkedCount;
+  }
+
+  // Lookup reservation logic (from QR or manual entry)
   async function lookupReservation(id) {
     if (!id) return;
     
-    // Clean and validate ID format
     let cleanId = id.trim();
     
-    // If the input was a URL, try to extract the ID from it
+    // URL fallback parsing logic
     try {
       if (cleanId.startsWith('http://') || cleanId.startsWith('https://')) {
         const url = new URL(cleanId);
@@ -75,7 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (urlParams.has('id')) {
           cleanId = urlParams.get('id');
         } else {
-          // Fallback: extract last segment of path
           const segments = url.pathname.split('/');
           cleanId = segments[segments.length - 1];
         }
@@ -85,7 +161,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     cleanId = cleanId.toUpperCase();
-    
     showState(stateLoading);
 
     try {
@@ -101,8 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const data = await response.json();
-      
-      // FIX: Extract "rsvp" from the API return object { success: true, rsvp: {...} }
       currentGuest = data.rsvp;
 
       renderGuestDetails(currentGuest);
@@ -115,11 +188,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderGuestDetails(rsvp) {
-    // FIX: Map database snake_case fields correctly
     const isAlreadyCheckedIn = rsvp.check_in_status === 'Checked In' || rsvp.checkInStatus === 'Checked In';
 
     if (isAlreadyCheckedIn) {
-      // Guest is already checked in
       valDupName.textContent = rsvp.name;
       valDupOrg.textContent = rsvp.organization || '';
       valDupId.textContent = rsvp.id;
@@ -127,14 +198,12 @@ document.addEventListener('DOMContentLoaded', () => {
       
       showState(stateFoundAlready);
     } else {
-      // Clean check-in possible
       valCleanName.textContent = rsvp.name;
       valCleanOrg.textContent = rsvp.organization || '';
       valCleanId.textContent = rsvp.id;
       valCleanMeal.textContent = rsvp.meal_preference || rsvp.mealPreference || 'Standard Gourmet Menu';
       valCleanReqs.textContent = rsvp.special_requests || rsvp.specialRequests || 'None';
       
-      // Make sure action button is active
       btnPerformCheckin.disabled = false;
       btnPerformCheckin.textContent = 'Check In Guest';
 
@@ -142,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Handle Check-in Action Click
+  // Handle database writing on Check-in click
   btnPerformCheckin.addEventListener('click', async () => {
     if (!currentGuest) return;
 
@@ -150,7 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
     btnPerformCheckin.textContent = 'Processing Check-in...';
 
     try {
-      // FIX: Changed fetch path and method payload to match POST /api/checkin
       const response = await fetch(`/api/checkin`, {
         method: 'POST',
         headers: {
@@ -162,10 +230,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const result = await response.json();
 
       if (response.ok) {
-        // Update local object status and timestamp
+        // Update status info inside local cache
         currentGuest.check_in_status = 'Checked In';
         currentGuest.check_in_time = result.rsvp.check_in_time || result.rsvp.checkInTime;
         
+        // Re-sync local directory lists with newest checkin values
+        const matchedIndex = guestDatabaseList.findIndex(g => g.id === currentGuest.id);
+        if (matchedIndex !== -1) {
+          guestDatabaseList[matchedIndex].check_in_status = 'Checked In';
+          guestDatabaseList[matchedIndex].check_in_time = currentGuest.check_in_time;
+        }
+
+        renderDirectory();
         renderGuestDetails(currentGuest);
       } else {
         alert(result.error || 'Check-in failed. Please try again.');
@@ -181,21 +257,20 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ==========================================
-  // 3. MANUAL LOOKUP INPUTS
+  // 3. EVENT LISTENERS & FILTERING
   // ==========================================
+  directorySearch.addEventListener('input', renderDirectory);
+  directoryFilter.addEventListener('change', renderDirectory);
+
   btnManualLookup.addEventListener('click', () => {
     const lookupId = manualIdInput.value.trim();
-    if (lookupId) {
-      lookupReservation(lookupId);
-    }
+    if (lookupId) lookupReservation(lookupId);
   });
 
   manualIdInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
       const lookupId = manualIdInput.value.trim();
-      if (lookupId) {
-        lookupReservation(lookupId);
-      }
+      if (lookupId) lookupReservation(lookupId);
     }
   });
 
@@ -205,7 +280,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function startScanner() {
     try {
       qrScanner = new Html5Qrcode("qr-reader");
-      
       const config = { 
         fps: 10, 
         qrbox: (width, height) => {
@@ -219,12 +293,9 @@ document.addEventListener('DOMContentLoaded', () => {
         { facingMode: "environment" }, 
         config,
         (decodedText) => {
-          console.log(`Scan result: ${decodedText}`);
           lookupReservation(decodedText);
         },
-        (errorMessage) => {
-          // Verbose logging callback
-        }
+        (errorMessage) => {}
       ).then(() => {
         isScannerRunning = true;
         btnToggleCamera.textContent = "Stop Scanner Camera";
@@ -235,7 +306,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("Camera start failed:", err);
         initializeFullWidget();
       });
-
     } catch (e) {
       console.error("QR Scanner initialization error:", e);
     }
@@ -269,14 +339,12 @@ document.addEventListener('DOMContentLoaded', () => {
       { fps: 10, qrbox: 250, rememberLastUsedCamera: true },
       false
     );
-    
     fallbackScanner.render((decodedText) => {
       lookupReservation(decodedText);
-    }, (error) => {
-      // frame error
-    });
+    }, (error) => {});
   }
 
-  // Auto start scanner camera on load
+  // Initial runs
+  fetchGuestDirectory();
   startScanner();
 });

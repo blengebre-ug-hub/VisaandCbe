@@ -5,21 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Staff Portal: CBE &amp; Visa VIP Event Check-in</title>
   
-  <!-- Premium Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-  <!-- HTML5 QR Code Library from CDN -->
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
-  <!-- CSS Stylesheet -->
   <link rel="stylesheet" href="checkin.css">
 </head>
 <body>
 
   <div class="portal-container">
-    <!-- Header -->
     <header class="portal-header">
       <div class="brand-group">
         <span class="portal-eyebrow">RECEPTION STAFF SYSTEM</span>
@@ -30,14 +26,11 @@
       </div>
     </header>
 
-    <!-- Main Workspace Grid -->
-    <div class="portal-workspace">
+    <div class="portal-workspace three-columns">
       
-      <!-- Left Panel: Scanner and Input -->
       <section class="panel scanner-panel">
         <h2 class="panel-title">Ticket Scanner</h2>
         
-        <!-- QR Code Camera Reader -->
         <div class="scanner-container">
           <div id="qr-reader"></div>
           <div class="scanner-instructions">
@@ -45,7 +38,6 @@
           </div>
         </div>
 
-        <!-- Manual Lookup Fallback -->
         <div class="manual-lookup-box">
           <div class="divider">
             <span>OR ENTER ID MANUALLY</span>
@@ -60,11 +52,9 @@
         </div>
       </section>
 
-      <!-- Right Panel: Status Dashboard -->
       <section class="panel status-panel">
         <h2 class="panel-title">Guest Verification</h2>
         
-        <!-- Empty State -->
         <div id="state-empty" class="state-view active">
           <div class="info-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -76,13 +66,11 @@
           <p>Scan a QR code or enter a Reservation ID to inspect registration status.</p>
         </div>
 
-        <!-- Scanning/Loading State -->
         <div id="state-loading" class="state-view">
           <div class="spinner"></div>
           <h3>Fetching Reservation...</h3>
         </div>
 
-        <!-- Error/Not Found State -->
         <div id="state-error" class="state-view state-alert-error">
           <div class="status-badge alert-red">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -95,7 +83,6 @@
           <button type="button" class="btn-reset-view">Clear Lookup</button>
         </div>
 
-        <!-- Found State — Not Checked In Yet -->
         <div id="state-found-clean" class="state-view state-alert-success">
           <div class="status-badge alert-green">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -107,23 +94,23 @@
           <div class="guest-details-card">
             <div class="guest-detail-row">
               <span class="label">Guest Name</span>
-              <span class="value" id="val-clean-name">Blen Gebre</span>
+              <span class="value" id="val-clean-name">Loading...</span>
             </div>
             <div class="guest-detail-row">
               <span class="label">Organization</span>
-              <span class="value" id="val-clean-org">Commercial Bank of Ethiopia</span>
+              <span class="value" id="val-clean-org">Loading...</span>
             </div>
             <div class="guest-detail-row">
               <span class="label">Reservation ID</span>
-              <span class="value id-value" id="val-clean-id">VIP-2026-000145</span>
+              <span class="value id-value" id="val-clean-id">Loading...</span>
             </div>
             <div class="guest-detail-row">
               <span class="label">Meal Preference</span>
-              <span class="value" id="val-clean-meal">Standard Gourmet Menu</span>
+              <span class="value" id="val-clean-meal">Loading...</span>
             </div>
             <div class="guest-detail-row">
               <span class="label">Special Requests</span>
-              <span class="value" id="val-clean-reqs">None</span>
+              <span class="value" id="val-clean-reqs">Loading...</span>
             </div>
             <div class="guest-detail-row checkin-status-row">
               <span class="label">Check-in Status</span>
@@ -136,7 +123,6 @@
           </button>
         </div>
 
-        <!-- Found State — Already Checked In -->
         <div id="state-found-already" class="state-view state-alert-warning">
           <div class="status-badge alert-orange">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -150,19 +136,19 @@
           <div class="guest-details-card">
             <div class="guest-detail-row">
               <span class="label">Guest Name</span>
-              <span class="value" id="val-dup-name">Blen Gebre</span>
+              <span class="value" id="val-dup-name">Loading...</span>
             </div>
             <div class="guest-detail-row">
               <span class="label">Organization</span>
-              <span class="value" id="val-dup-org">Commercial Bank of Ethiopia</span>
+              <span class="value" id="val-dup-org">Loading...</span>
             </div>
             <div class="guest-detail-row">
               <span class="label">Reservation ID</span>
-              <span class="value id-value" id="val-dup-id">VIP-2026-000145</span>
+              <span class="value id-value" id="val-dup-id">Loading...</span>
             </div>
             <div class="guest-detail-row highlight-time-row">
               <span class="label">Check-in Timestamp</span>
-              <span class="value time-value" id="val-dup-time">5:42 PM</span>
+              <span class="value time-value" id="val-dup-time">Loading...</span>
             </div>
             <div class="guest-detail-row checkin-status-row">
               <span class="label">Status</span>
@@ -179,10 +165,31 @@
 
       </section>
 
+      <section class="panel list-panel">
+        <h2 class="panel-title">Guest Directory</h2>
+        
+        <div class="directory-toolbar">
+          <input type="text" id="directory-search" placeholder="Search by name, ID, or company..." autocomplete="off">
+          <select id="directory-filter">
+            <option value="all">All Guests</option>
+            <option value="pending">Pending</option>
+            <option value="checked-in">Checked In</option>
+          </select>
+        </div>
+
+        <div class="guest-list-wrapper">
+          <ul class="guest-list-group" id="guest-directory-list">
+            </ul>
+        </div>
+        
+        <div class="directory-stats">
+          Total Reserved: <span id="stat-total">0</span> | Checked In: <span id="stat-checked">0</span>
+        </div>
+      </section>
+
     </div>
   </div>
 
-  <!-- JavaScript logic -->
   <script src="checkin.js"></script>
 </body>
 </html>

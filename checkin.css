@@ -535,6 +535,151 @@ body {
    ========================================================================== */
 
 /* ── Tablet & Small Laptops (820px and below) ── */
+/* Update layout grid for three-columns configuration */
+@media (min-width: 1024px) {
+  .portal-workspace.three-columns {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1.1fr; /* Scanner, Status View, Guest Directory List */
+    gap: 30px;
+  }
+}
+
+/* Guest Directory Card Panel wrapper */
+.list-panel {
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh; /* Keep the panel locked within readable screen height */
+}
+
+/* Toolbar configuration */
+.directory-toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.directory-toolbar input {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: #fff;
+  padding: 12px 14px;
+  border-radius: 6px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  outline: none;
+}
+
+.directory-toolbar input:focus {
+  border-color: var(--color-gold);
+}
+
+.directory-toolbar select {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: #fff;
+  border-radius: 6px;
+  padding: 0 10px;
+  font-size: 13px;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Scrollable Container Wrapper */
+.guest-list-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.15);
+  max-height: 480px;
+}
+
+.guest-list-group {
+  list-style: none;
+}
+
+/* Scrollbar aesthetic touches */
+.guest-list-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+.guest-list-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+.guest-list-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+/* Interactive Guest Directory Cards */
+.guest-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.guest-item:last-child {
+  border-bottom: none;
+}
+
+.guest-item:hover {
+  background: rgba(212, 175, 55, 0.06); /* Subtle gold background highlight */
+}
+
+.guest-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.guest-item-name {
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.guest-item-meta {
+  color: #a19bb8;
+  font-size: 11px;
+}
+
+/* Directory Badges styling */
+.list-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.list-badge.status-pending {
+  background: rgba(255, 145, 0, 0.08);
+  border: 1px solid var(--color-orange-border);
+  color: var(--color-orange);
+}
+
+.list-badge.status-checked {
+  background: rgba(0, 230, 118, 0.08);
+  border: 1px solid var(--color-green-border);
+  color: var(--color-green);
+}
+
+.directory-stats {
+  margin-top: 15px;
+  font-size: 12px;
+  color: #a19bb8;
+  text-align: right;
+  letter-spacing: 0.5px;
+}
+
+#stat-total, #stat-checked {
+  font-weight: 700;
+  color: #fff;
+}
 @media (max-width: 820px) {
   body {
     align-items: flex-start; /* Avoid top cutoff if page is taller than screen */
