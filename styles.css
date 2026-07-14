@@ -348,22 +348,28 @@ body {
 }
 
 .hero-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin-bottom: 40px;
 }
 
 .brand-badge {
-  display: inline-block;
-  padding: 8px 16px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  font-size: 11px;
-  letter-spacing: 3px;
-  color: var(--color-text-bright);
-  font-weight: 600;
-  background:
-    linear-gradient(rgba(26, 5, 43, 0.85), rgba(26, 5, 43, 0.85)) padding-box,
-    var(--dual-brand-gradient) border-box;
-  backdrop-filter: blur(5px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Increase padding and gap to give the logos breathing room */
+  padding: 8px 20px; 
+  gap: 16px;          /* Controls the space specifically between the two logos */
+  
+  /* Background and border styling matching the image */
+  background: rgba(15, 12, 27, 0.6); /* Dark semi-transparent background */
+  border: 1.5px solid #d4af37;        /* Gold/amber border (or use a gradient) */
+  border-radius: 8px;                 /* Smooth rounded corners */
+  
+  /* Minimum width to ensure it doesn't shrink too much */
+  min-width: 140px; 
 }
 
 .hero-main {
