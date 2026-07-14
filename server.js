@@ -85,6 +85,8 @@ async function initializeDatabase() {
     `ALTER TABLE rsvps ALTER COLUMN organization SET DEFAULT ''`
   ];
   try {
+    await pool.query(`CREATE SEQUENCE IF NOT EXISTS rsvp_counter_seq START WITH 100;`);
+    
     await pool.query(createTableSQL);
     for (const sql of alterColumns) {
       try { await pool.query(sql); } catch (_) { /* column may already exist with different constraints */ }
@@ -172,10 +174,10 @@ app.post('/api/rsvp', async (req, res) => {
     }
 
     // ── 2. Generate sequential Reservation ID ───────────────────────────────
-    const countResult  = await pool.query('SELECT COUNT(*) FROM rsvps');
-    const nextCounter  = 100 + parseInt(countResult.rows[0].count, 10);
+    // Get the next sequence value atomically from PostgreSQL
+    const seqResult = await pool.query("SELECT nextval('rsvp_counter_seq') AS next_id");
+    const nextCounter = seqResult.rows[0].next_id;
     const reservationId = `VIP-2026-${String(nextCounter).padStart(6, '0')}`;
-
     // ── 3. Generate QR Code ─────────────────────────────────────────────────
     const qrDataUrl = await QRCode.toDataURL(reservationId, {
       color: { dark: '#3A125E', light: '#FFFFFF' },
@@ -231,7 +233,10 @@ app.post('/api/rsvp', async (req, res) => {
     console.log(`✅ RSVP saved: ${reservationId} — ${name.trim()} (${fanPoints} pts)`);
 
     // ── 5. Build Clean Confirmation Email HTML (Updated Venue & Time) ──────
-    const qrImageUrl = `${process.env.BASE_URL || `http://localhost:${PORT}`}/qrcodes/${reservationId}.png`;
+// ── 5. Build Clean Confirmation Email HTML (Using clean CIDs for images) ──
+    const productionBaseUrl = process.env.BASE_URL ? process.env.BASE_URL.replace(/\/$/, '') : `http://localhost:${PORT}`;
+    const qrImageUrl = `${productionBaseUrl}/qrcodes/${reservationId}.png`;
+    
     const emailBodyHTML = `
 <!DOCTYPE html>
 <html lang="en">
@@ -254,14 +259,14 @@ app.post('/api/rsvp', async (req, res) => {
             <table width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr>
                 <td align="center" style="padding-bottom:24px;">
-                  <table cellpadding="0" cellspacing="0" border="0">
+                  <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
                     <tr>
-                      <td style="background:rgba(255,255,255,0.12);border-radius:8px;padding:10px 18px;">
-                        <span style="color:#ffffff;font-weight:800;font-size:13px;letter-spacing:3px;">CBE</span>
+                      <td style="background:#1a1f71;border-radius:6px;padding:8px 16px;vertical-align:middle;">
+                        <img src="cid:visalogo" alt="VISA" style="display:block; border:0; height:24px; width:auto;" />
                       </td>
-                      <td style="color:#D4AF37;font-size:18px;font-weight:300;padding:0 14px;">×</td>
-                      <td style="background:rgba(255,255,255,0.12);border-radius:8px;padding:10px 18px;">
-                        <span style="color:#D4AF37;font-weight:800;font-size:18px;font-style:italic;letter-spacing:1px;">VISA</span>
+                      <td width="12" style="width:12px;">&nbsp;</td>
+                      <td style="background:#0a1547;border-radius:6px;padding:8px 16px;vertical-align:middle;">
+                        <img src="cid:cbelogo" alt="CBE" style="display:block; border:0; height:24px; width:auto;" />
                       </td>
                     </tr>
                   </table>
@@ -337,18 +342,18 @@ app.post('/api/rsvp', async (req, res) => {
           <td style="padding:28px 40px;text-align:center;background:#f8f9ff;">
             <table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto 16px;">
               <tr>
-                <td style="background:#0a1547;border-radius:6px;padding:8px 16px;">
-                  <span style="color:#fff;font-weight:800;font-size:12px;letter-spacing:3px;">CBE</span>
+                <td style="background:#1a1f71;border-radius:6px;padding:8px 16px;vertical-align:middle;">
+                  <img src="cid:visalogo" alt="VISA" style="display:block; border:0; height:24px; width:auto;" />
                 </td>
-                <td style="color:#888;font-size:14px;padding:0 12px;">×</td>
-                <td style="background:#1a1f71;border-radius:6px;padding:8px 16px;">
-                  <span style="color:#D4AF37;font-weight:800;font-size:14px;font-style:italic;">VISA</span>
+                <td width="12" style="width:12px;">&nbsp;</td>
+                <td style="background:#0a1547;border-radius:6px;padding:8px 16px;vertical-align:middle;">
+                  <img src="cid:cbelogo" alt="CBE" style="display:block; border:0; height:24px; width:auto;" />
                 </td>
               </tr>
             </table>
             <p style="margin:0 0 6px;font-size:13px;font-weight:600;color:#333;">Commercial Bank of Ethiopia &amp; Visa International</p>
             <p style="margin:0;font-size:12px;color:#888;">This is an official VIP invitation. Do not share this QR code with others.</p>
-            <p style="margin:8px 0 0;font-size:11px;color:#bbb;">© 2026 CBE × Visa FIFA World Cup 2026 Final Viewing Party</p>
+            <p style="margin:8px 0 0;font-size:11px;color:#bbb;">© 2026 FIFA World Cup 2026 Final Viewing Party</p>
           </td>
         </tr>
 
@@ -364,6 +369,7 @@ app.post('/api/rsvp', async (req, res) => {
     `;
 
     // ── 6. Save local email backup ──────────────────────────────────────────
+    // Creating backup with dataUrls for local file viewing safety
     const localBackup = emailBodyHTML.replace('src="cid:qrcode"', `src="${qrDataUrl}"`);
     fs.writeFileSync(path.join(EMAILS_DIR, `email-${reservationId}.html`), localBackup);
 
@@ -403,12 +409,28 @@ Commercial Bank of Ethiopia & Visa International
           subject:     `Your FIFA World Cup 2026 VIP Pass: ${reservationId}`,
           text:        plainTextBody,
           html:        emailBodyHTML,
-          attachments: [{ filename: `VIP-Pass-QRCode-${reservationId}.png`, content: qrBuffer, cid: 'qrcode' }]
+          attachments: [
+            { 
+              filename: `VIP-Pass-QRCode-${reservationId}.png`, 
+              content: qrBuffer, 
+              cid: 'qrcode' 
+            },
+            { 
+              filename: 'visa-fifa-colored.png', 
+              path: path.join(__dirname, 'assets', 'brand', 'visa-fifa-colored.png'), 
+              cid: 'visalogo' 
+            },
+            { 
+              filename: 'cbe-logo-transparent.png', 
+              path: path.join(__dirname, 'assets', 'brand', 'cbe-logo-transparent.png'), 
+              cid: 'cbelogo' 
+            }
+          ]
         });
         emailSent = true;
         console.log(`📧 Confirmation email sent to: ${cleanEmail}`);
       } catch (mailErr) {
-        console.error('⚠️  SMTP send failed:', mailErr.message);
+        console.error('⚠️ SMTP send failed:', mailErr.message);
       }
     }
 
