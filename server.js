@@ -13,7 +13,6 @@ const PORT = process.env.PORT || 3000;
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
 // ─── PostgreSQL Connection Pool ────────────────────────────────────────────────
-// Supports both Render (DATABASE_URL) and local (.env individual vars)
 const poolConfig = process.env.DATABASE_URL
   ? {
       connectionString: process.env.DATABASE_URL,
@@ -34,7 +33,6 @@ pool.connect((err, client, release) => {
   if (err) {
     console.error('❌ PostgreSQL connection failed:');
     console.error(err);
-    console.error('   Check your .env credentials and that PostgreSQL is running.');
   } else {
     console.log('✅ PostgreSQL connected successfully.');
     release();
@@ -81,6 +79,8 @@ async function initializeDatabase() {
     `ALTER TABLE rsvps ADD COLUMN IF NOT EXISTS referred_by VARCHAR(20)`,
     `ALTER TABLE rsvps ADD COLUMN IF NOT EXISTS halftime_home INT`,
     `ALTER TABLE rsvps ADD COLUMN IF NOT EXISTS halftime_away INT`,
+    `ALTER TABLE rsvps ADD COLUMN IF NOT EXISTS check_in_status VARCHAR(20) DEFAULT 'Not Yet'`,
+    `ALTER TABLE rsvps ADD COLUMN IF NOT EXISTS check_in_time VARCHAR(20)`,
     `ALTER TABLE rsvps ALTER COLUMN email DROP NOT NULL`,
     `ALTER TABLE rsvps ALTER COLUMN organization SET DEFAULT ''`
   ];
@@ -89,7 +89,7 @@ async function initializeDatabase() {
     
     await pool.query(createTableSQL);
     for (const sql of alterColumns) {
-      try { await pool.query(sql); } catch (_) { /* column may already exist with different constraints */ }
+      try { await pool.query(sql); } catch (_) { /* Safe fallback */ }
     }
     console.log('✅ Table "rsvps" is ready.');
   } catch (err) {
@@ -124,9 +124,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname)));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
-// Ensure local email backup directory exists
+
 const EMAILS_DIR = process.env.VERCEL ? path.join('/tmp', 'sent_emails') : path.join(__dirname, 'data', 'sent_emails');
-// Serve QR code PNG images for external access
 app.use('/qrcodes', express.static(EMAILS_DIR));
 if (!fs.existsSync(EMAILS_DIR)) {
   fs.mkdirSync(EMAILS_DIR, { recursive: true });
@@ -141,6 +140,7 @@ function getFormattedTime() {
   hours = hours % 12 || 12;
   return `${hours}:${mins} ${ampm}`;
 }
+
 // ─── API: Submit RSVP ─────────────────────────────────────────────────────────
 app.post('/api/rsvp', async (req, res) => {
   const {
@@ -174,10 +174,10 @@ app.post('/api/rsvp', async (req, res) => {
     }
 
     // ── 2. Generate sequential Reservation ID ───────────────────────────────
-    // Get the next sequence value atomically from PostgreSQL
     const seqResult = await pool.query("SELECT nextval('rsvp_counter_seq') AS next_id");
     const nextCounter = seqResult.rows[0].next_id;
     const reservationId = `VIP-2026-${String(nextCounter).padStart(6, '0')}`;
+
     // ── 3. Generate QR Code ─────────────────────────────────────────────────
     const qrDataUrl = await QRCode.toDataURL(reservationId, {
       color: { dark: '#3A125E', light: '#FFFFFF' },
@@ -208,10 +208,10 @@ app.post('/api/rsvp', async (req, res) => {
         cleanOrg,
         (mealPreference  || '').trim(),
         (specialRequests || '').trim(),
-        null, // team
-        null, // scoreHome
-        null, // scoreAway
-        null, // goalScorer
+        null,
+        null,
+        null,
+        null,
         guests,
         fanPoints,
         badges,
@@ -232,8 +232,7 @@ app.post('/api/rsvp', async (req, res) => {
 
     console.log(`✅ RSVP saved: ${reservationId} — ${name.trim()} (${fanPoints} pts)`);
 
-    // ── 5. Build Clean Confirmation Email HTML (Updated Venue & Time) ──────
-// ── 5. Build Clean Confirmation Email HTML (Using clean CIDs for images) ──
+    // ── 5. Build Clean Confirmation Email HTML (Science Museum & 6:00 PM) ──
     const productionBaseUrl = process.env.BASE_URL ? process.env.BASE_URL.replace(/\/$/, '') : `http://localhost:${PORT}`;
     const qrImageUrl = `${productionBaseUrl}/qrcodes/${reservationId}.png`;
     
@@ -369,7 +368,6 @@ app.post('/api/rsvp', async (req, res) => {
     `;
 
     // ── 6. Save local email backup ──────────────────────────────────────────
-    // Creating backup with dataUrls for local file viewing safety
     const localBackup = emailBodyHTML.replace('src="cid:qrcode"', `src="${qrDataUrl}"`);
     fs.writeFileSync(path.join(EMAILS_DIR, `email-${reservationId}.html`), localBackup);
 
@@ -449,6 +447,7 @@ Commercial Bank of Ethiopia & Visa International
     return res.status(500).json({ error: 'Internal server error. Please try again.' });
   }
 });
+
 // ─── API: Leaderboard ─────────────────────────────────────────────────────────
 app.get('/api/leaderboard', async (req, res) => {
   try {
@@ -491,21 +490,84 @@ app.post('/api/rsvp/:id/halftime', async (req, res) => {
   }
 });
 
+// ─── API: Event Check-In (CRITICAL FIX FOR THE DB LOOKUP ERROR) ─────────────────
+app.post('/api/checkin', async (req, res) => {
+  let { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: 'Reservation ID is required for check-in.' });
+  }
+
+  // Sanitize the input ID: remove quotes, white space, and convert to UPPERCASE
+  let cleanId = id.replace(/['"]+/g, '').trim().toUpperCase();
+
+  try {
+    // 1. Database Lookup (Handles case-insensitive matches)
+    const result = await pool.query('SELECT * FROM rsvps WHERE UPPER(id) = $1', [cleanId]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        error: `Reservation ID "${cleanId}" could not be found in the database. Please check the ID and try again.`
+      });
+    }
+
+    const rsvp = result.rows[0];
+
+    // 2. Check if user is already checked in
+    if (rsvp.check_in_status === 'Checked In') {
+      return res.status(200).json({
+        success: true,
+        alreadyCheckedIn: true,
+        message: `${rsvp.name} is already checked in.`,
+        rsvp
+      });
+    }
+
+    // 3. Update the check-in record
+    const checkInTime = getFormattedTime();
+    await pool.query(
+      `UPDATE rsvps 
+       SET check_in_status = 'Checked In', check_in_time = $1 
+       WHERE id = $2`,
+      [checkInTime, rsvp.id]
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: `Successfully checked in ${rsvp.name}!`,
+      rsvp: {
+        ...rsvp,
+        check_in_status: 'Checked In',
+        check_in_time: checkInTime
+      }
+    });
+
+  } catch (err) {
+    console.error('❌ Check-in database error:', err.message);
+    return res.status(500).json({ error: 'Database error processing check-in.' });
+  }
+});
+
 // ─── API: Serve QR Code Image ────────────────────────────────────────
 app.get('/qrcodes/:id.png', (req, res) => {
   const id = req.params.id;
-  const filePath = path.join(EMAILS_DIR, `qrcode-${id}.png`);
-  if (fs.existsSync(filePath)) {
+  const filePath = path.join(EMAILS_DIR, `qrcode-${id}`);
+  
+  // Safe lookup: check with or without custom file structure suffix
+  if (fs.existsSync(`${filePath}.png`)) {
+    res.sendFile(`${filePath}.png`);
+  } else if (fs.existsSync(filePath)) {
     res.sendFile(filePath);
   } else {
     res.status(404).json({ error: 'QR code not found.' });
   }
 });
+
 // ─── Start Server ─────────────────────────────────────────────
 if (require.main === module) {
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`🚀 Server running on port ${PORT}`);
   });
 }
-
+ 
 module.exports = app;
