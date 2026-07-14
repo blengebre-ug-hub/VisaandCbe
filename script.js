@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!emailConfirmationNotice) return;
     emailConfirmationNotice.classList.remove('hidden');
     if (result?.emailSent && formData?.email) {
-      emailConfirmationNotice.textContent = `Confirmation email sent to ${formData.email} with your QR code and event details.`;
+      emailConfirmationNotice.textContent = `Confirmation email sent to ${formData.email} with your QR code and event details.If you don't see it, please check your Spam / Junk  folder!`;
       emailConfirmationNotice.classList.remove('is-warning');
     } else {
       emailConfirmationNotice.textContent = 'A backup confirmation copy with your QR code was saved locally for your records.';

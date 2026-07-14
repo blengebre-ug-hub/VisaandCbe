@@ -172,7 +172,7 @@ app.post('/api/rsvp', async (req, res) => {
     const nextCounter = seqResult.rows[0].next_id;
     const reservationId = `VIP-2026-${String(nextCounter).padStart(6, '0')}`;
 
-    // ── 3. Generate QR Code directly into memory buffer ───────────────────
+    // ── 3. Generate QR Code directly into memory Base64 string ──────────────
     const qrDataUrl = await QRCode.toDataURL(reservationId, {
       color: { dark: '#3A125E', light: '#FFFFFF' },
       width: 300,
@@ -388,7 +388,7 @@ Thank you,
 Commercial Bank of Ethiopia & Visa International
         `.trim();
 
-        // Safe setup of attachments (Avoid local disk crash if files are missing)
+        // Safe setup of attachments
         const attachments = [
           { 
             filename: `VIP-Pass-QRCode-${reservationId}.png`, 
@@ -397,12 +397,15 @@ Commercial Bank of Ethiopia & Visa International
           }
         ];
 
-        const visaLogoPath = path.join(__dirname, 'assets', 'brand', 'visa-fifa-colored.png');
+        // FIXED: Updated target path for visa-logo4.png in assets/brand directory
+        const visaLogoPath = path.join(__dirname, 'assets', 'brand', 'visa-logo4.png');
         const cbeLogoPath = path.join(__dirname, 'assets', 'brand', 'cbe-logo-transparent.png');
 
         // Gracefully append brand logo assets if they physically exist
         if (fs.existsSync(visaLogoPath)) {
-          attachments.push({ filename: 'visa-fifa-colored.png', path: visaLogoPath, cid: 'visalogo' });
+          attachments.push({ filename: 'visa-logo4.png', path: visaLogoPath, cid: 'visalogo' });
+        } else {
+          console.warn(`⚠️ Warning: Visa logo not found at ${visaLogoPath}`);
         }
         if (fs.existsSync(cbeLogoPath)) {
           attachments.push({ filename: 'cbe-logo-transparent.png', path: cbeLogoPath, cid: 'cbelogo' });
@@ -415,7 +418,14 @@ Commercial Bank of Ethiopia & Visa International
           subject:     `Your FIFA World Cup 2026 VIP Pass: ${reservationId}`,
           text:        plainTextBody,
           html:        emailBodyHTML,
-          attachments: attachments
+          attachments: attachments,
+          // Transactional high-priority optimization headers
+          headers: {
+            'X-Priority': '1',
+            'X-MSMail-Priority': 'High',
+            'Importance': 'high',
+            'Precedence': 'special-delivery'
+          }
         });
         emailSent = true;
         console.log(`📧 Confirmation email sent to: ${cleanEmail}`);
@@ -429,6 +439,7 @@ Commercial Bank of Ethiopia & Visa International
       reservationId,
       qrDataUrl,
       emailSent,
+      email: cleanEmail,
       fanPoints,
       badges,
       referralCode
