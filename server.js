@@ -492,17 +492,23 @@ app.post('/api/rsvp/:id/halftime', async (req, res) => {
 
 // ─── API: Event Check-In (CRITICAL FIX FOR THE DB LOOKUP ERROR) ─────────────────
 app.post('/api/checkin', async (req, res) => {
+   
   let { id } = req.body;
 
   if (!id) {
-    return res.status(400).json({ error: 'Reservation ID is required for check-in.' });
+    return res.status(400).json({ error: 'Reservation ID is required.' });
   }
 
-  // Sanitize the input ID: remove quotes, white space, and convert to UPPERCASE
   let cleanId = id.replace(/['"]+/g, '').trim().toUpperCase();
 
   try {
-    // 1. Database Lookup (Handles case-insensitive matches)
+    // 🔍 DEBUG LOG: Let's see what the database actually holds right now
+    const currentRows = await pool.query('SELECT id FROM rsvps LIMIT 5');
+    console.log('--- DB CHECK-IN DEBUG ---');
+    console.log('Target ID trying to look up:', cleanId);
+    console.log('Existing IDs currently in this DB table:', currentRows.rows.map(r => r.id));
+    console.log('-------------------------');
+
     const result = await pool.query('SELECT * FROM rsvps WHERE UPPER(id) = $1', [cleanId]);
 
     if (result.rows.length === 0) {
@@ -513,41 +519,20 @@ app.post('/api/checkin', async (req, res) => {
 
     const rsvp = result.rows[0];
 
-    // 2. Check if user is already checked in
     if (rsvp.check_in_status === 'Checked In') {
-      return res.status(200).json({
-        success: true,
-        alreadyCheckedIn: true,
-        message: `${rsvp.name} is already checked in.`,
-        rsvp
-      });
+      return res.status(200).json({ success: true, alreadyCheckedIn: true, message: `${rsvp.name} is already checked in.`, rsvp });
     }
 
-    // 3. Update the check-in record
     const checkInTime = getFormattedTime();
-    await pool.query(
-      `UPDATE rsvps 
-       SET check_in_status = 'Checked In', check_in_time = $1 
-       WHERE id = $2`,
-      [checkInTime, rsvp.id]
-    );
+    await pool.query(`UPDATE rsvps SET check_in_status = 'Checked In', check_in_time = $1 WHERE id = $2`, [checkInTime, rsvp.id]);
 
-    return res.status(200).json({
-      success: true,
-      message: `Successfully checked in ${rsvp.name}!`,
-      rsvp: {
-        ...rsvp,
-        check_in_status: 'Checked In',
-        check_in_time: checkInTime
-      }
-    });
+    return res.status(200).json({ success: true, message: `Successfully checked in ${rsvp.name}!`, rsvp });
 
   } catch (err) {
     console.error('❌ Check-in database error:', err.message);
     return res.status(500).json({ error: 'Database error processing check-in.' });
   }
 });
-
 // ─── API: Serve QR Code Image ────────────────────────────────────────
 app.get('/qrcodes/:id.png', (req, res) => {
   const id = req.params.id;
